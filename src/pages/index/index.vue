@@ -19,6 +19,8 @@ function goTest() {
     <view @click="changeTitle">changeTitle</view>
     <view @click="goTest">测试页</view>
   </view>
+
+
 </template>
 
 <style scoped lang="scss">

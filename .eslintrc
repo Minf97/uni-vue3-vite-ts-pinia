@@ -7,7 +7,7 @@
       {
         "singleQuote": true,
         "trailingComma": "none"
-      }
+      },
     ],
     "antfu/if-newline": "off",
     "@typescript-eslint/ban-ts-comment": "off",

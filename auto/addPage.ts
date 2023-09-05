@@ -29,6 +29,13 @@ const filesList = fs.readdirSync('./src/pages');
 // 获取需要新增的页面  =>取差集
 const newPages = pages.filter((i) => !filesList.includes(i.name));
 // 添加新路由
+addPages(newPages);
+
+
+/**
+ * 添加新路由
+ * @param pages 页面
+ */
 function addPages(pages) {
   for (const page of pages) {
     const { name, title } = page;
@@ -37,19 +44,19 @@ function addPages(pages) {
     const filePath = `${dirPath}/${name}.vue`;
     const createStream = fs.createWriteStream(filePath);
 
-    const template = `<template>
-  <view>${title}</view>
-</template>
+    const template =
+    `
+      <template>
+        <view>${title}</view>
+      </template>
 
-<script setup lang="ts" name="${name}"></script>
+      <script setup lang="ts" name="${name}"></script>
 
-<style scoped></style>
-`;
+      <style scoped></style>
+    `;
     createStream.write(template);
     createStream.end();
     console.log('\x1B[34m', `pages ${name} created successfully.`);
   }
   console.log('\x1B[32m%s\x1B[39m', '\n All files are created successfully.\n');
 }
-
-addPages(newPages);

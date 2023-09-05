@@ -1,3 +1,4 @@
+
 import { isDevelopment, isH5 } from './platform';
 import { forward } from './router';
 import { getCommonParams } from '@/config/commonParams';

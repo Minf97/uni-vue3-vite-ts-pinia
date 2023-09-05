@@ -1,3 +1,4 @@
+
 import { isFastClick, parseUrl, restoreUrl } from './shared';
 import { getUrlType, h5HsqMap, needAuthPath, pagesMap } from './urlMap';
 
