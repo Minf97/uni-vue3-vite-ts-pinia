@@ -1,3 +1,4 @@
+
 <script setup lang="ts">
 import { useTitle } from '@/hooks/useTitle';
 import { forward } from '@/utils/router';
@@ -14,13 +15,11 @@ function goTest() {
   <view class="content">
     <image class="logo" src="/static/logo.png" />
     <view class="text-area">
-      <text class="title">{{ title }}</text>
+      <text class="title fs-50">{{ title }}</text>
     </view>
     <view @click="changeTitle">changeTitle</view>
     <view @click="goTest">测试页</view>
   </view>
-
-
 </template>
 
 <style scoped lang="scss">
@@ -30,6 +29,7 @@ function goTest() {
   justify-content: center;
   align-items: center;
 }
+
 .logo {
   margin-left: auto;
   margin-right: auto;
@@ -38,12 +38,14 @@ function goTest() {
   width: 200rpx;
   height: 200rpx;
 }
+
 .text-area {
   display: flex;
   justify-content: center;
 }
+
 .title {
-  font-size: 36rpx;
+  // font-size: 36rpx;
   color: #8f8f94;
 }
 </style>

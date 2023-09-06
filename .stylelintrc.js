@@ -21,7 +21,7 @@ module.exports = {
     ],
     'string-quotes': 'single',
     'alpha-value-notation': 'number',
-    'at-rule-empty-line-before': 'never',
+    'at-rule-empty-line-before': ['always', { ignore: ["inside-block", "blockless-after-same-name-blockless"] }],
     'at-rule-no-unknown': [
       true,
       {
@@ -314,6 +314,6 @@ module.exports = {
       '-webkit-text-fill-color',
       '-webkit-tap-highlight-color',
     ],
-    'rule-empty-line-before': 'never',
+    'rule-empty-line-before': ['always', { except: ["after-single-line-comment", "first-nested"] }],
   },
 }

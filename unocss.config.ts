@@ -26,4 +26,8 @@ export default defineConfig({
     preflightRoot: ['page,::before,::after']
   },
   rules: getSizeRules(sizeMapping)
+  // rules: [
+  //   ['m-1', { margin: '1px' }]
+  // ],
+
 });
