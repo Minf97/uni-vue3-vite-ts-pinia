@@ -4,6 +4,7 @@
     "GetTest": true,
     "PostTest": true,
     "Types": true,
+    "Kconfig": true,
     "User": true
   }
 }
