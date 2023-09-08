@@ -1,7 +1,7 @@
 
 
 <template>
-  <div class="flex w-full pt-35">
+  <div class="flex w-full pt-35" v-if="flag">
     <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">{{ data.title }}:</div>
     <div class="flex flex-1">
       <a-input-number class="w-400" @change="onChange" id="inputNumber" v-model:value="inputVal" :min="range.min"
@@ -12,15 +12,17 @@
 </template>
 
 <script setup lang="ts">
-import { useResult } from '@/hooks/useResult'
+import { useDepend } from '@/hooks/useDepend';
 // 数据
 const { data } = defineProps<{ data: Kconfig.IntObj }>();
-const { changeResult } = useStore('result')
+const { changeResult } = useStore('result');
+const { flag } = useDepend(data);
+
 // 一些判断条件：
-
+// 判断range
 const range = reactive({ min: 0, max: 65535 });
-
 if (data.range && data.range.length > 1) {
+  // Object.assign会使reactive失去响应式
   // const [min, max] = data.range;
   // Object.assign(range, min, max);
   range.min = data.range[0];

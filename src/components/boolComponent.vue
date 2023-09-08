@@ -6,21 +6,27 @@
     <div class="flex flex-1 items-center">
       <a-switch @change="onChange" v-model:checked="inputVal" />
     </div>
+
+    <!-- 特殊项 - children - 用于递归 -->
+    <!-- <div v-for="item in data.children">
+      <stringComponent v-if="checkIfCanShow(item, 'string')" :data="item" />
+      <intComponent v-if="checkIfCanShow(item, 'int')" :data="item" />
+      <boolComponent v-if="checkIfCanShow(item, 'bool')" :data="item" />
+      <choiceComponent v-if="checkIfCanShow(item, 'choice')" :data="item" />
+    </div> -->
   </div>
 </template>
 
 <script setup lang="ts">
-import { useFlag } from '@/hooks/useFlag'
-import { handleDepends_on } from '@/utils/util';
+// @ts-nocheck
+import { useDepend } from '@/hooks/useDepend';
 // 数据
 const { data } = defineProps<{ data: Kconfig.BoolObj }>();
-const { result, changeResult, delResult } = useStore('result')
-const { flag, setFlag } = useFlag(true)
+const { changeResult, delResult } = useStore('result');
+const { flag } = useDepend(data);
+
 // 一些判断条件：
-const dependList = handleDepends_on(data.depends_on);
-dependList.map(item => {
-  if (!result.value[item]) setFlag(false)
-})
+
 
 // 双向绑定
 const inputVal = ref("")

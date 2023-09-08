@@ -6,7 +6,6 @@ export default defineStore(
     function changeResult(id, val) {
       result.value[id] = val;
       console.log("result赋值了:", id, val, );
-      console.log(result.value);
     }
     function delResult(id) {
       delete result.value[id]

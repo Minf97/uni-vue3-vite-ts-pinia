@@ -23,3 +23,17 @@ export function handleDepends_on(str: string | null) {
   }
   return result;
 }
+
+
+/**
+ * 检查是否可以渲染该type组件
+ * @param data 待检查的数据
+ * @param type 类型
+ * @returns boolean
+ */
+export function checkIfCanShow(data: Kconfig.children, type: Kconfig.Type) {
+  // menu单独处理
+  if(type == 'menu') return data.title && (data.type == type);
+
+  return data.name && data.title && (data.type == type)
+}
