@@ -28,7 +28,10 @@ const { flag } = useDepend(data);
 // 一些判断条件：
 
 // 双向绑定，用于显示
-const inputVal = ref("")
+const inputVal = ref("");
+data.children.map(item => {
+  item.default && (inputVal.value = item.name)
+})
 // 输入框改变事件
 const onChange = (e) => {
   // 先全部删除，再把该键值置位

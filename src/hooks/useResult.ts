@@ -9,6 +9,7 @@ export const useResult = () => {
     delete result[id]
     console.log("result删除了键值：", result);
   }
+
   return {
     result,
     changeResult,

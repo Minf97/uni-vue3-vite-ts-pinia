@@ -19,6 +19,7 @@
 </template>
 
 <script setup lang="ts">
+// @ts-nocheck
 import { useDepend } from '@/hooks/useDepend';
 import { checkIfCanShow } from '@/utils/util';
 // 数据
@@ -29,7 +30,7 @@ const { changeResult } = useStore('result')
 const { flag } = useDepend(data);
 
 // 双向绑定
-const inputVal = ref("")
+const inputVal = ref(data.default)
 // 输入框改变事件
 const onChange = () => {
   changeResult(data.name, inputVal.value)

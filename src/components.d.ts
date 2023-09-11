@@ -12,6 +12,7 @@ declare module '@vue/runtime-core' {
     BoolComponent: typeof import('./components/boolComponent.vue')['default']
     ChoiceComponent: typeof import('./components/choiceComponent.vue')['default']
     IntComponent: typeof import('./components/intComponent.vue')['default']
+    Menu2Component: typeof import('./components/menu2Component.vue')['default']
     MenuComponent: typeof import('./components/menuComponent.vue')['default']
     PullList: typeof import('./components/pullList.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

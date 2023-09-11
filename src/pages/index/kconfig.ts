@@ -72,8 +72,10 @@ export const kconfigJSON = [
         "name": "CL_ESP32_MODULE_ENABLE_LEXIN",
         "range": null,
         "title": "Support Le Xin module",
+        // "inline": true,
         "type": "bool"
       },
+
       {
         "children": [],
         "depends_on": "CL_CHIP_TYPE_ESP32",
@@ -81,6 +83,7 @@ export const kconfigJSON = [
         "id": "CL_ESP32_MODULE_ENABLE_LEXIN_D0WD",
         "name": "CL_ESP32_MODULE_ENABLE_LEXIN_D0WD",
         "range": null,
+        // "inline": true,
         "title": "Support Lexin D0WD module",
         "type": "bool"
       },
@@ -222,54 +225,6 @@ export const kconfigJSON = [
             "name": "CL_REMOTE_CONTROL_TYPE",
             "title": "Remote type",
             "type": "choice"
-          },
-          {
-            "children": [
-              {
-                "children": [],
-                "depends_on": "CL_REMOTE_CONTROL_ENABLED",
-                "help": null,
-                "id": "CL_REMOTE_CONTROL_1_CODE",
-                "name": "CL_REMOTE_CONTROL_1_CODE",
-                "range": null,
-                "title": "code",
-                "type": "int"
-              },
-              {
-                "children": [
-                  {
-                    "children": [],
-                    "depends_on": "<choice CL_REMOTE_CONTROL_1_FUN>",
-                    "help": null,
-                    "id": "CL_REMOTE_CONTROL_1_FUN_ON",
-                    "name": "CL_REMOTE_CONTROL_1_FUN_ON",
-                    "range": null,
-                    "title": "on",
-                    "type": "bool"
-                  },
-                  {
-                    "children": [],
-                    "depends_on": "<choice CL_REMOTE_CONTROL_1_FUN>",
-                    "help": null,
-                    "id": "CL_REMOTE_CONTROL_1_FUN_OFF",
-                    "name": "CL_REMOTE_CONTROL_1_FUN_OFF",
-                    "range": null,
-                    "title": "off",
-                    "type": "bool"
-                  }
-                ],
-                "depends_on": "CL_REMOTE_CONTROL_ENABLED",
-                "help": null,
-                "id": "remote-control-enable-remote-control-remote-control-fun",
-                "name": "CL_REMOTE_CONTROL_1_FUN",
-                "title": "fun",
-                "type": "choice"
-              }
-            ],
-            "depends_on": "CL_REMOTE_CONTROL_ENABLED",
-            "id": "remote-control-enable-remote-control-remote-control",
-            "title": "Remote control",
-            "type": "menu"
           }
         ],
         "depends_on": null,
@@ -279,6 +234,66 @@ export const kconfigJSON = [
         "range": null,
         "title": "Enable remote control",
         "type": "bool"
+      },
+      {
+        "children": [],
+        "depends_on": "CL_REMOTE_CONTROL_TYPE_IR",
+        "help": null,
+        "id": "CL_REMOTE_CONTROL_IR_HEAD",
+        "name": "CL_REMOTE_CONTROL_IR_HEAD",
+        "range": null,
+        "title": "ir head",
+        "type": "int"
+      },
+      {
+        "children": [
+          {
+            "children": [],
+            "depends_on": "CL_REMOTE_CONTROL_ENABLED",
+            "help": null,
+            "id": "CL_REMOTE_CONTROL_1_CODE",
+            "name": "CL_REMOTE_CONTROL_-id-_CODE",
+            "range": null,
+            "title": "code",
+            "type": "int",
+            "placement": "left"
+          },
+          {
+            "children": [
+              {
+                "children": [],
+                "depends_on": "<choice CL_REMOTE_CONTROL_1_FUN>",
+                "help": null,
+                "id": "CL_REMOTE_CONTROL_1_FUN_ON",
+                "name": "CL_REMOTE_CONTROL_-id-_FUN_ON",
+                "range": null,
+                "title": "on",
+                "type": "bool"
+              },
+              {
+                "children": [],
+                "depends_on": "<choice CL_REMOTE_CONTROL_1_FUN>",
+                "help": null,
+                "id": "CL_REMOTE_CONTROL_1_FUN_OFF",
+                "name": "CL_REMOTE_CONTROL_-id-_FUN_OFF",
+                "range": null,
+                "title": "off",
+                "type": "bool"
+              }
+            ],
+            "depends_on": "CL_REMOTE_CONTROL_ENABLED",
+            "help": null,
+            "id": "remote-control-remote-fun-fun",
+            "name": "CL_REMOTE_CONTROL_-id-_FUN",
+            "title": "fun",
+            "type": "choice",
+            "placement": "right"
+          }
+        ],
+        "depends_on": "CL_REMOTE_CONTROL_ENABLED",
+        "id": "remote-control-remote-fun",
+        "title": "Remote fun",
+        "type": "menu2"
       }
     ],
     "depends_on": null,
