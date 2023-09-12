@@ -247,17 +247,17 @@ export const kconfigJSON = [
       },
       {
         "children": [
-          {
-            "children": [],
-            "depends_on": "CL_REMOTE_CONTROL_ENABLED",
-            "help": null,
-            "id": "CL_REMOTE_CONTROL_1_CODE",
-            "name": "CL_REMOTE_CONTROL_-id-_CODE",
-            "range": null,
-            "title": "code",
-            "type": "int",
-            "placement": "left"
-          },
+          // {
+          //   "children": [],
+          //   "depends_on": "CL_REMOTE_CONTROL_ENABLED",
+          //   "help": null,
+          //   "id": "CL_REMOTE_CONTROL_1_CODE",
+          //   "name": "CL_REMOTE_CONTROL_-id-_CODE",
+          //   "range": null,
+          //   "title": "code",
+          //   "type": "int",
+          //   "placement": "left"
+          // },
           {
             "children": [
               {

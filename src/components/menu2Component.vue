@@ -40,7 +40,7 @@
       </a-row>
     </div>
     <!-- 自定义按钮 -->
-    <div class="flex items-center justify-center mt-60">
+    <div class="flex items-center justify-center mt-60" v-if="flag">
       <PlusCircleFilled @click="addChildren" class="color-#1677ff fs-50 mr-50" />
       <DeleteFilled @click="popChildren" class="color-red fs-50" />
     </div>
@@ -61,43 +61,60 @@ const [api, contextHolder] = notification.useNotification();
 const { flag } = useDepend(data);
 const { result } = useStore('result');
 
-const concatList = [];
-// 一些判断条件：
-// for (const key in result.value) {
-//   const match = key.match(/\d+/);
-//   // const concatList = [];
-//   if (match) {
-//     const num = match[0];
-//     if (num > 1) {
-//       data.children.map(item => {
-//         if (item.name.replace(/-id.+-/, num) === key) {
-//           const newItem = deepClone(item);
-//           newItem.name = newItem.replace(/-id.+-/, Number(num) + 1);
-//           newItem.default = result.value[key];
-//           newItem.children
-//           concatList.push(newItem)
-//         }
-//       })
-//     }
-//   }
-// }
+// 要做两件事：1.点击新增自定义项  2.页面加载时，把缓存的自定义项展示出来
+const concatList = []
+// data.children.forEach(item => {
+//   const concatItem = recursiveAddResult(item)
+//   concatItem ? concatList.push(concatItem) : ''
+// })
 
-function recursive(obj, num, key) {
+data.children.forEach(item => {
+  const concatItem = recursiveAddResult(item)
+  concatItem ? data.children.push(concatItem) : ''
+})
+console.log(data.children);
+
+
+
+function recursiveAddResult(obj) {
+  const newItem = deepClone(obj);
+  let res = {};
   for (const key in result.value) {
-    if (obj.name.replace(/-id.+-/, num) === key) {
-      // const newItem = deepClone(obj);
-      // newItem.name = newItem.replace(/-id.+-/, Number(num) + 1);
-      // newItem.default = result.value[key];
-      // concatList.push(newItem)
-    }
-  }
+    // console.log(newItem.name.replace(/-id.+-/, num), key);
+    const match = key.match(/_(\d+)_/);
+    if (match) {
+      const id = match[1];
+      // 判断是否要新增展示自定义项，只有id>1时，才是新增的自定义项
+      if (id > 1) {
+        // 找到对应的项了，新增该项
+        if (newItem.name.replace(/-id(\d+)-/, id) === key) {
+          newItem.name = newItem.name.replace(/-id.+-/, `-id${id}-`);
+          newItem.default = result.value[key];
+          res = newItem;
+        }
 
-  if (Array.isArray(obj.children) && obj.children.length > 0) {
-    for (const child of obj.children) {
-      recursive(child)
+        // 这里有缺陷，没有递归实现，只解析了子级第一层 -- 针对choice
+        if (Array.isArray(newItem.children) && newItem.children.length > 0) {
+          for (let i = 0; i < newItem.children.length; i++) {
+            const child = newItem.children[i];
+            // 这里也是找到了，需要新增该项
+            if (child.name.replace(/-id(\d+)-/, id) === key) {
+              child.name = child.name.replace(/-id.+-/, `-id${id}-`);
+              child.default = result.value[key];
+              // 如果有一项满足，就把子项所有的名字改掉，也要把父项的名字改掉
+              for (let i = 0; i < newItem.children.length; i++) {
+                const child = newItem.children[i];
+                child.name = child.name.replace(/-id.+-/, `-id${id}-`);
+                newItem.name = newItem.name.replace(/-id.+-/, `-id${id}-`);
+              }
+              res = newItem;
+            }
+          }
+        }
+      }
     }
   }
-  return obj
+  return res
 }
 
 const openNotification = (placement: NotificationPlacement) => {
@@ -124,22 +141,32 @@ const popChildren = (lastID) => {
 
 const addChildren = () => {
   const lastID = checkLastID();
-  const appendList = [];
-  data.children.forEach(item => {
-    if (item.name.includes(`-id${lastID}-`)) {
-      const newItem = deepClone(item);
-      newItem.name = newItem.name.replace(/-id(\d+)-/, `-id${lastID + 1}-`);
-      // 针对普通组件
-      newItem.default = null;
-      // 针对choise组件
-      newItem.children.forEach(item => {
-        item.default = null;
-        item.name = item.name.replace(/-id(\d+)-/, `-id${lastID + 1}-`);
-      });
-      appendList.push(newItem);
-    }
+  console.log(lastID);
+
+  const concatList = data.children.map(item => {
+    return recursive(item, lastID);
   })
-  data.children = data.children.concat(appendList);
+  data.children = data.children.concat(concatList.filter(item => item));
+  console.log(data.children);
+
+
+  function recursive(obj, lastID) {
+    const newItem = deepClone(obj);
+    let res = "";
+    if (newItem.name.includes(`-id${lastID}-`)) {
+      newItem.name = newItem.name.replace(/-id.+-/, `-id${lastID + 1}-`);
+      newItem.default = null;
+      res = newItem;
+    }
+    if (Array.isArray(res.children) && res.children.length > 0) {
+      for (let i = 0; i < res.children.length; i++) {
+        res.children[i] = recursive(res.children[i], lastID);
+        console.log(res.children[i].name);
+
+      }
+    }
+    return res;
+  }
 }
 
 function checkLastID() {
