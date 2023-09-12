@@ -247,17 +247,227 @@ export const kconfigJSON = [
       },
       {
         "children": [
-          // {
-          //   "children": [],
-          //   "depends_on": "CL_REMOTE_CONTROL_ENABLED",
-          //   "help": null,
-          //   "id": "CL_REMOTE_CONTROL_1_CODE",
-          //   "name": "CL_REMOTE_CONTROL_-id-_CODE",
-          //   "range": null,
-          //   "title": "code",
-          //   "type": "int",
-          //   "placement": "left"
-          // },
+          {
+            "children": [],
+            "depends_on": "CL_REMOTE_CONTROL_ENABLED",
+            "help": null,
+            "id": "CL_REMOTE_CONTROL_1_CODE",
+            "name": "CL_REMOTE_CONTROL_-id-_CODE",
+            "range": null,
+            "title": "code",
+            "type": "int",
+            "placement": "left"
+          },
+          {
+            "children": [
+              {
+                "children": [],
+                "depends_on": "<choice CL_REMOTE_CONTROL_1_FUN>",
+                "help": null,
+                "id": "CL_REMOTE_CONTROL_1_FUN_ON",
+                "name": "CL_REMOTE_CONTROL_-id-_FUN_ON",
+                "range": null,
+                "title": "on",
+                "type": "bool"
+              },
+              {
+                "children": [],
+                "depends_on": "<choice CL_REMOTE_CONTROL_1_FUN>",
+                "help": null,
+                "id": "CL_REMOTE_CONTROL_1_FUN_OFF",
+                "name": "CL_REMOTE_CONTROL_-id-_FUN_OFF",
+                "range": null,
+                "title": "off",
+                "type": "bool"
+              }
+            ],
+            "depends_on": "CL_REMOTE_CONTROL_ENABLED",
+            "help": null,
+            "id": "remote-control-remote-fun-fun",
+            "name": "CL_REMOTE_CONTROL_-id-_FUN",
+            "title": "fun",
+            "type": "choice",
+            "placement": "right"
+          }
+        ],
+        "depends_on": "CL_REMOTE_CONTROL_ENABLED",
+        "id": "remote-control-remote-fun",
+        "title": "Remote fun",
+        "type": "menu2"
+      },
+      {
+        "children": [
+          {
+            "children": [],
+            "depends_on": "CL_REMOTE_CONTROL_ENABLED",
+            "help": null,
+            "id": "CL_REMOTE_CONTROL_1_CODE",
+            "name": "CL_REMOTE_CONTROL_-id-_CODE",
+            "range": null,
+            "title": "code",
+            "type": "int",
+            "placement": "left"
+          },
+          {
+            "children": [
+              {
+                "children": [],
+                "depends_on": "<choice CL_REMOTE_CONTROL_1_FUN>",
+                "help": null,
+                "id": "CL_REMOTE_CONTROL_1_FUN_ON",
+                "name": "CL_REMOTE_CONTROL_-id-_FUN_ON",
+                "range": null,
+                "title": "on",
+                "default": "y",
+                "type": "bool"
+              },
+              {
+                "children": [],
+                "depends_on": "<choice CL_REMOTE_CONTROL_1_FUN>",
+                "help": null,
+                "id": "CL_REMOTE_CONTROL_1_FUN_OFF",
+                "name": "CL_REMOTE_CONTROL_-id-_FUN_OFF",
+                "range": null,
+                "title": "off",
+                "type": "bool"
+              }
+            ],
+            "depends_on": "CL_REMOTE_CONTROL_ENABLED",
+            "help": null,
+            "id": "remote-control-remote-fun-fun",
+            "name": "CL_REMOTE_CONTROL_-id-_FUN",
+            "title": "fun",
+            "type": "choice",
+            "placement": "middle",
+            "disabled": true,
+          },
+          {
+            "children": [
+              {
+                "children": [],
+                "depends_on": "<choice CL_REMOTE_CONTROL_1_FUN>",
+                "help": null,
+                "id": "CL_REMOTE_CONTROL_1_FUN_ON",
+                "name": "CL_REMOTE_CONTROL_-id-_FUN_ON",
+                "range": null,
+                "title": "on",
+                "type": "bool"
+              },
+              {
+                "children": [],
+                "depends_on": "<choice CL_REMOTE_CONTROL_1_FUN>",
+                "help": null,
+                "id": "CL_REMOTE_CONTROL_1_FUN_OFF",
+                "name": "CL_REMOTE_CONTROL_-id-_FUN_OFF",
+                "range": null,
+                "title": "off",
+                "default": "y",
+                "type": "bool"
+              }
+            ],
+            "depends_on": "CL_REMOTE_CONTROL_ENABLED",
+            "help": null,
+            "id": "remote-control-remote-fun-fun",
+            "name": "CL_REMOTE_CONTROL_-id-_FUN",
+            "title": "fun",
+            "type": "choice",
+            "placement": "middle",
+            "disabled": true,
+          },
+          {
+            "children": [
+              {
+                "children": [],
+                "depends_on": "<choice CL_REMOTE_CONTROL_1_FUN>",
+                "help": null,
+                "id": "CL_REMOTE_CONTROL_1_FUN_ON",
+                "name": "CL_REMOTE_CONTROL_-id-_FUN_ON",
+                "range": null,
+                "title": "on",
+                "type": "bool"
+              },
+              {
+                "children": [],
+                "depends_on": "<choice CL_REMOTE_CONTROL_1_FUN>",
+                "help": null,
+                "id": "CL_REMOTE_CONTROL_1_FUN_OFF",
+                "name": "CL_REMOTE_CONTROL_-id-_FUN_OFF",
+                "range": null,
+                "title": "off",
+                "type": "bool"
+              }
+            ],
+            "depends_on": "CL_REMOTE_CONTROL_ENABLED",
+            "help": null,
+            "id": "remote-control-remote-fun-fun",
+            "name": "CL_REMOTE_CONTROL_-id-_FUN",
+            "title": "fun",
+            "type": "choice",
+            "placement": "middle",
+            "disabled": true,
+          },
+          {
+            "children": [
+              {
+                "children": [],
+                "depends_on": "<choice CL_REMOTE_CONTROL_1_FUN>",
+                "help": null,
+                "id": "CL_REMOTE_CONTROL_1_FUN_ON",
+                "name": "CL_REMOTE_CONTROL_-id-_FUN_ON",
+                "range": null,
+                "title": "on",
+                "type": "bool"
+              },
+              {
+                "children": [],
+                "depends_on": "<choice CL_REMOTE_CONTROL_1_FUN>",
+                "help": null,
+                "id": "CL_REMOTE_CONTROL_1_FUN_OFF",
+                "name": "CL_REMOTE_CONTROL_-id-_FUN_OFF",
+                "range": null,
+                "title": "off",
+                "type": "bool"
+              }
+            ],
+            "depends_on": "CL_REMOTE_CONTROL_ENABLED",
+            "help": null,
+            "id": "remote-control-remote-fun-fun",
+            "name": "CL_REMOTE_CONTROL_-id-_FUN",
+            "title": "fun",
+            "type": "choice",
+            "placement": "right"
+          },
+          {
+            "children": [
+              {
+                "children": [],
+                "depends_on": "<choice CL_REMOTE_CONTROL_1_FUN>",
+                "help": null,
+                "id": "CL_REMOTE_CONTROL_1_FUN_ON",
+                "name": "CL_REMOTE_CONTROL_-id-_FUN_ON",
+                "range": null,
+                "title": "on",
+                "type": "bool"
+              },
+              {
+                "children": [],
+                "depends_on": "<choice CL_REMOTE_CONTROL_1_FUN>",
+                "help": null,
+                "id": "CL_REMOTE_CONTROL_1_FUN_OFF",
+                "name": "CL_REMOTE_CONTROL_-id-_FUN_OFF",
+                "range": null,
+                "title": "off",
+                "type": "bool"
+              }
+            ],
+            "depends_on": "CL_REMOTE_CONTROL_ENABLED",
+            "help": null,
+            "id": "remote-control-remote-fun-fun",
+            "name": "CL_REMOTE_CONTROL_-id-_FUN",
+            "title": "fun",
+            "type": "choice",
+            "placement": "right"
+          },
           {
             "children": [
               {

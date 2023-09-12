@@ -6,35 +6,15 @@
       <div class="w-70% border-b border-0 border-solid border-#ccc leading-loose">{{ data.title }}</div>
     </div>
     <div class="w-70% m-auto">
-      <a-row>
-        <a-col :span="8">
-          <div v-for="item in data.children">
-            <stringComponent v-if="checkIfCanShow(item, 'string') && item.placement == 'left'" :data="item" />
-            <intComponent v-if="checkIfCanShow(item, 'int') && item.placement == 'left'" :data="item" />
-            <boolComponent v-if="checkIfCanShow(item, 'bool') && item.placement == 'left'" :data="item" />
-            <choiceComponent v-if="checkIfCanShow(item, 'choice') && item.placement == 'left'" :data="item" />
-            <menuComponent v-if="checkIfCanShow(item, 'menu') && item.placement == 'left'" :data="item" />
-            <menu2Component v-if="checkIfCanShow(item, 'menu2') && item.placement == 'left'" :data="item" />
-          </div>
-        </a-col>
-        <a-col :span="8">
-          <div v-for="item in data.children">
-            <stringComponent v-if="checkIfCanShow(item, 'string') && item.placement == 'middle'" :data="item" />
-            <intComponent v-if="checkIfCanShow(item, 'int') && item.placement == 'middle'" :data="item" />
-            <boolComponent v-if="checkIfCanShow(item, 'bool') && item.placement == 'middle'" :data="item" />
-            <choiceComponent v-if="checkIfCanShow(item, 'choice') && item.placement == 'middle'" :data="item" />
-            <menuComponent v-if="checkIfCanShow(item, 'menu') && item.placement == 'middle'" :data="item" />
-            <menu2Component v-if="checkIfCanShow(item, 'menu2') && item.placement == 'middle'" :data="item" />
-          </div>
-        </a-col>
-        <a-col :span="8">
-          <div v-for="item in data.children">
-            <stringComponent v-if="checkIfCanShow(item, 'string') && item.placement == 'right'" :data="item" />
-            <intComponent v-if="checkIfCanShow(item, 'int') && item.placement == 'right'" :data="item" />
-            <boolComponent v-if="checkIfCanShow(item, 'bool') && item.placement == 'right'" :data="item" />
-            <choiceComponent v-if="checkIfCanShow(item, 'choice') && item.placement == 'right'" :data="item" />
-            <menuComponent v-if="checkIfCanShow(item, 'menu') && item.placement == 'right'" :data="item" />
-            <menu2Component v-if="checkIfCanShow(item, 'menu2') && item.placement == 'right'" :data="item" />
+      <a-row v-for="a in list">
+        <a-col :span="8" v-for="n in ['left', 'middle', 'right']">
+          <div v-for="item in a">
+            <stringComponent v-if="checkIfCanShow(item, 'string') && item.placement == n" :data="item" />
+            <intComponent v-if="checkIfCanShow(item, 'int') && item.placement == n" :data="item" />
+            <boolComponent v-if="checkIfCanShow(item, 'bool') && item.placement == n" :data="item" />
+            <choiceComponent v-if="checkIfCanShow(item, 'choice') && item.placement == n" :data="item" />
+            <menuComponent v-if="checkIfCanShow(item, 'menu') && item.placement == n" :data="item" />
+            <menu2Component v-if="checkIfCanShow(item, 'menu2') && item.placement == n" :data="item" />
           </div>
         </a-col>
       </a-row>
@@ -59,38 +39,52 @@ import { NotificationPlacement, notification } from 'ant-design-vue';
 const { data, isSpecial } = defineProps<{ data: Kconfig.BoolObj, isSpecial?: boolean }>();
 const [api, contextHolder] = notification.useNotification();
 const { flag } = useDepend(data);
-const { result } = useStore('result');
+const { result, delResult } = useStore('result');
 
-// 要做两件事：1.点击新增自定义项  2.页面加载时，把缓存的自定义项展示出来
-const concatList = []
-// data.children.forEach(item => {
-//   const concatItem = recursiveAddResult(item)
-//   concatItem ? concatList.push(concatItem) : ''
-// })
 
-data.children.forEach(item => {
-  const concatItem = recursiveAddResult(item)
-  concatItem ? data.children.push(concatItem) : ''
+// 页面加载时，把缓存的自定义项展示出来
+data.children.map(item => {
+  const concatList = recursiveAddResult(item);
+  if (concatList.length > 0) {
+    data.children = data.children.concat(...concatList);
+  }
 })
-console.log(data.children);
 
+const list = ref([]);
+watchEffect(() => {
+  list.value = data.children.reduce((accumulator, current) => {
+    const currentId = current.name.match(/-id(\d+)-/)[1];
+    console.log(123);
+
+    const exiting = accumulator.find(item => {
+      const itemId = item[0].name.match(/-id(\d+)-/)[1];
+      return currentId === itemId
+    })
+
+    if (exiting) {
+      exiting.push(current)
+    } else {
+      accumulator.push([current])
+    }
+    return accumulator
+  }, [])
+})
 
 
 function recursiveAddResult(obj) {
-  const newItem = deepClone(obj);
-  let res = {};
+  let res = [];
   for (const key in result.value) {
-    // console.log(newItem.name.replace(/-id.+-/, num), key);
     const match = key.match(/_(\d+)_/);
     if (match) {
       const id = match[1];
       // 判断是否要新增展示自定义项，只有id>1时，才是新增的自定义项
       if (id > 1) {
+        const newItem = deepClone(obj);
         // 找到对应的项了，新增该项
         if (newItem.name.replace(/-id(\d+)-/, id) === key) {
           newItem.name = newItem.name.replace(/-id.+-/, `-id${id}-`);
           newItem.default = result.value[key];
-          res = newItem;
+          res.push(newItem);
         }
 
         // 这里有缺陷，没有递归实现，只解析了子级第一层 -- 针对choice
@@ -107,7 +101,7 @@ function recursiveAddResult(obj) {
                 child.name = child.name.replace(/-id.+-/, `-id${id}-`);
                 newItem.name = newItem.name.replace(/-id.+-/, `-id${id}-`);
               }
-              res = newItem;
+              res.push(newItem);
             }
           }
         }
@@ -117,6 +111,7 @@ function recursiveAddResult(obj) {
   return res
 }
 
+// 提示
 const openNotification = (placement: NotificationPlacement) => {
   api.info({
     message: `提示`,
@@ -125,6 +120,7 @@ const openNotification = (placement: NotificationPlacement) => {
   });
 };
 
+// 点击删除自定义项
 const popChildren = (lastID) => {
   lastID = typeof (lastID) === 'number' ? lastID : checkLastID();
   if (lastID === 1) {
@@ -133,21 +129,31 @@ const popChildren = (lastID) => {
   }
   data.children.map((item, index) => {
     if (item.name.includes(`-id${lastID}-`)) {
-      data.children.splice(index, 1);
+      const delItem = data.children.splice(index, 1)[0];
+      // choice
+      if (delItem.type == 'choice') {
+        delItem.children.map(item => {
+          delResult(item.name);
+        })
+      }
+      // 普通
+      else {
+        delResult(delItem.name);
+      }
       popChildren(lastID);
     }
   })
 }
 
+// 点击添加自定义项
 const addChildren = () => {
   const lastID = checkLastID();
-  console.log(lastID);
-
   const concatList = data.children.map(item => {
     return recursive(item, lastID);
   })
   data.children = data.children.concat(concatList.filter(item => item));
   console.log(data.children);
+
 
 
   function recursive(obj, lastID) {
@@ -161,8 +167,6 @@ const addChildren = () => {
     if (Array.isArray(res.children) && res.children.length > 0) {
       for (let i = 0; i < res.children.length; i++) {
         res.children[i] = recursive(res.children[i], lastID);
-        console.log(res.children[i].name);
-
       }
     }
     return res;

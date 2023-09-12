@@ -4,7 +4,7 @@
   <div class="flex w-full pt-35" v-if="flag">
     <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">{{ data.title }}:</div>
     <div class="flex flex-1 items-center">
-      <a-select class="w-400" ref="select" v-model:value="inputVal" @change="onChange">
+      <a-select class="w-400" ref="select" v-model:value="inputVal" @change="onChange" :disabled="data.disabled">
         <a-select-option v-for="item in data.children" :key="item.name" :value="item.name">{{ item.title
         }}</a-select-option>
       </a-select>

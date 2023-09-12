@@ -70,5 +70,6 @@ declare namespace Kconfig {
     title: string
     type: string
     inline?: boolean
+    disabled? :boolean
   }
 }
