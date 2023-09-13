@@ -4,8 +4,26 @@
   <div class="flex w-full pt-35" v-if="flag">
     <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">{{ data.title }}:</div>
     <div class="flex flex-1">
-      <a-input-number class="w-400" @change="onChange" id="inputNumber" v-model:value="inputVal" :min="range.min"
-        :max="range.max" />
+      <!-- <a-input-number class="w-400" @change="onChange" id="inputNumber" :placeholder="placeholder"
+        v-model:value="inputVal" :min="range.min" :max="range.max" :status="status" :disabled="data.disabled" /> -->
+
+      <a-tooltip :trigger="['click']" v-model:open="tooltipFlag" placement="top" overlay-class-name="numeric-input">
+        <template v-if="inputVal" #title>
+          <span class="numeric-input-title">
+            {{ formatValue }}
+          </span>
+        </template>
+
+        <a-input-group compact class="w-600">
+          <a-select v-model:value="unitType">
+            <a-select-option value="ten">十进制</a-select-option>
+            <a-select-option value="sixteen">十六进制</a-select-option>
+          </a-select>
+          <a-input v-model:value="inputVal" style="width: 50%;" @focus="onChange" @change="onChange" @blur="onBlur" :status="status"
+            :disabled="data.disabled" />
+        </a-input-group>
+      </a-tooltip>
+
       <div class="flex items-center pl-10 c-#999">range: {{ range.min }} - {{ range.max }}</div>
     </div>
   </div>
@@ -22,30 +40,35 @@
 <script setup lang="ts">
 // @ts-nocheck
 import { useDepend } from '@/hooks/useDepend';
+import { useInput } from '@/hooks/useInput'
 import { checkIfCanShow } from '@/utils/util';
 // 数据
 const { data } = defineProps<{ data: Kconfig.IntObj }>();
 const { changeResult } = useStore('result');
 const { flag } = useDepend(data);
+const { unitType, formatValue, tooltipFlag, inputVal, status, range, onChange } = useInput();
 
 // 一些判断条件：
 // 判断range
-const range = reactive({ min: 0, max: 65535 });
 if (data.range && data.range.length > 1) {
-  // Object.assign会使reactive失去响应式
-  // const [min, max] = data.range;
-  // Object.assign(range, min, max);
   range.min = data.range[0];
   range.max = data.range[1];
 }
 
-
-// 双向绑定
-const inputVal = ref(data.default)
-// 输入框改变事件
-const onChange = () => {
+inputVal.value = data.default;
+const onBlur = () => {
+  if(status.value) return;
   changeResult(data.name, inputVal.value)
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.numeric-input .ant-tooltip-inner {
+  min-width: 32px;
+  min-height: 37px;
+}
+
+.numeric-input .numeric-input-title {
+  font-size: 14px;
+}
+</style>

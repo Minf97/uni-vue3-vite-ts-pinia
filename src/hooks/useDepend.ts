@@ -3,7 +3,7 @@ import { handleDepends_on } from '@/utils/util';
 
 
 export const useDepend = (data) => {
-  const { result } = useStore('result');
+  const { result, delResult } = useStore('result');
   const { flag, setFlag } = useFlag(true);
 
   const dependList = handleDepends_on(data.depends_on);
@@ -14,6 +14,22 @@ export const useDepend = (data) => {
     dependList.map(item => {
       if (!result.value[item]) setFlag(false)
     })
+
+    // 针对type
+    if (data.type == 'choice') {
+      data.children.forEach((item, index) => {
+        const childDependList = handleDepends_on(item.depends_on);
+        childDependList.map(item => {
+          if (!result.value[item]) {
+            delResult(data.children[index].name);
+            data.children[index].hide = true;
+            data.children[index].default = false;
+            return;
+          }
+          data.children[index].hide = false;
+        })
+      })
+    }
   }, { immediate: true, deep: true })
 
   return {

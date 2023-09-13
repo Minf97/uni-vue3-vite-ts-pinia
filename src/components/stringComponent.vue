@@ -5,7 +5,7 @@
     <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">{{ data.title }}:</div>
     <div class="flex-1">
       <a-input class="w-400" @change="onChange" v-model:value="inputVal" :placeholder="data.help || data.title"
-        allow-clear showCount />
+        allow-clear showCount :disabled="data.disabled" />
     </div>
   </div>
   <!-- 特殊项 - children - 用于递归 -->

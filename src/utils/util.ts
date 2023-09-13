@@ -7,15 +7,19 @@
  * @returns [name1, name2]
  */
 export function handleDepends_on(str: string | null) {
-  const result: any[] = [];
+  let result: any[] = [];
   const regex = /<[^<>]*>/;
 
   // null
   if (!str) return result;
   // 存在 &&
   if (str.includes('&&')) {
-    const a = str.split('&&').filter(item => item.trim() && !regex.test(item));
-    result.concat(a)
+    const a = str
+      .split('&&')
+      .filter(item => item.trim() && !regex.test(item))
+      .map(item => item.replace(/\s*/g, ''));
+
+    result = result.concat(a)
   }
   // 不存在 &&
   else {
@@ -40,23 +44,6 @@ export function checkIfCanShow(data: Kconfig.children, type: Kconfig.Type) {
 }
 
 
-
-function compareStrings(str1, str2) {
-  const placeholderRegex = /-id-/;
-  // 查找字符串中的数字部分
-  const numRegex = /\d+/;
-  const match2 = str2.match(numRegex);
-
-  if (match2) {
-    const num2 = match2[0];
-    // 将占位符替换为提取到的数字部分
-    const replacedStr1 = str1.replace(placeholderRegex, num2);
-    return replacedStr1 === str2;
-  }
-
-  return false;
-}
-
 /**
  * 深度遍历，
  * @param obj 对象
@@ -65,13 +52,12 @@ function compareStrings(str1, str2) {
  * @returns
  */
 export function addDefaultRecursive(obj, name, value) {
+  if (obj.name && obj.name.match(/-id-/)) {
+    obj.name = obj.name.replace(/-id-/, '-id1-');
+  }
 
   if (obj.name === name) {
     obj.default = value;
-  }
-
-  if (obj.name && obj.name.match(/-id-/)) {
-    obj.name = obj.name.replace(/-id-/, '-id1-');
   }
 
 
@@ -84,4 +70,56 @@ export function addDefaultRecursive(obj, name, value) {
   return obj;
 }
 
+/**
+ * 深度遍历，
+ * @param obj 对象
+ * @param name name值
+ * @param value
+ * @returns
+ */
+export function addResultRecursive(obj) {
+  const { changeResult } = useStore('result');
+
+  if (obj.name && obj.name.match(/-id-/)) {
+    obj.name = obj.name.replace(/-id-/, '-id1-');
+  }
+  if (obj.default) {
+    changeResult(obj.name, obj.default);
+  }
+
+  if (Array.isArray(obj.children) && obj.children.length > 0) {
+    for (const child of obj.children) {
+      addResultRecursive(child);
+    }
+  }
+}
+
+
+/**
+ * 16进制转10进制
+ * @param hex 16进制数
+ * @returns 10进制数
+ */
+export function hexToDecimal(hex: string): number {
+  return parseInt(hex, 16);
+}
+
+/**
+ * 10进制转16进制
+ * @param decimal 10进制数
+ * @returns 16进制数
+ */
+export function decimalToHex(decimal: number): string {
+  // 使用 toString() 将十进制数值转换为十六进制字符串，并添加前缀 "0x"
+  return '0x' + decimal.toString(16).toUpperCase();
+}
+
+
+/**
+ * 校验是否是16进制
+ */
+export function checkIsHex(val: string): boolean {
+  const regex = /^0x[0-9A-Fa-f]+$/
+  return regex.test(String(val));
+}
 // recursive

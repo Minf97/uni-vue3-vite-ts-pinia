@@ -14,24 +14,30 @@ export default defineStore(
       console.log("result删除了键值:", key);
     }
 
-    function handleKey(key: string) {
-      const match = key.match(/id(\d+)/);
-      if (match) {
-        const id = match[1];
-        key = key.replace(/-id.+-/, id);
-      }
-      return key
+    const findKey = (key: string): boolean => {
+      key = handleKey(key);
+      return result.value[key] ? true : false
     }
 
     return {
       result,
       changeResult,
-      delResult
+      delResult,
+      findKey
     };
   },
-  {
-    persist: {
-      enabled: true
-    }
-  }
+  // {
+  //   persist: {
+  //     enabled: true
+  //   }
+  // }
 );
+
+function handleKey(key: string) {
+  const match = key.match(/id(\d+)/);
+  if (match) {
+    const id = match[1];
+    key = key.replace(/-id.+-/, id);
+  }
+  return key
+}

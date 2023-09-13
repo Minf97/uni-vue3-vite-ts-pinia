@@ -5,7 +5,10 @@
     <div class="fs-50 fw-700 tracking-wide flex items-center justify-center pt-70" v-if="!isSpecial && flag">
       <div class="w-70% border-b border-0 border-solid border-#ccc leading-loose">{{ data.title }}</div>
     </div>
-    <div class="w-70% m-auto">
+    <div class="fs-40 fw-700 tracking-wide flex items-center justify-center pt-70" v-if="isSpecial && flag">
+      <div class="w-70% border-b border-0 border-solid border-#ccc leading-loose c-#999">{{ data.title }}</div>
+    </div>
+    <div class="w-80% m-auto">
       <a-row v-for="a in list">
         <a-col :span="8" v-for="n in ['left', 'middle', 'right']">
           <div v-for="item in a">
@@ -52,9 +55,13 @@ data.children.map(item => {
 
 const list = ref([]);
 watchEffect(() => {
+  if (data.children.length == 0) return;
   list.value = data.children.reduce((accumulator, current) => {
-    const currentId = current.name.match(/-id(\d+)-/)[1];
-    console.log(123);
+    console.log(current);
+    const match = current?.name.match(/-id(\d+)-/);
+    if (!match) return
+    const currentId = current?.name.match(/-id(\d+)-/)[1];
+    console.log(accumulator);
 
     const exiting = accumulator.find(item => {
       const itemId = item[0].name.match(/-id(\d+)-/)[1];

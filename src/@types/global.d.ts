@@ -58,10 +58,11 @@ declare namespace Kconfig {
     title: string
     type: string
     inline?: boolean
+    hide? : boolean
   }
   // type为Choice时
   type ChoiceObj = {
-    children: children[]
+    children: BoolObj[]
     default?: string
     depends_on: string | null
     help: string | null

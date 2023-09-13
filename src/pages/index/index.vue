@@ -2,11 +2,15 @@
 <script setup lang="ts">
 // @ts-nocheck
 import { kconfigJSON } from "./kconfig";
-import { checkIfCanShow, addDefaultRecursive } from '@/utils/util';
+import { checkIfCanShow, addDefaultRecursive, addResultRecursive } from '@/utils/util';
 
 const { result } = useStore('result');
 const state = reactive({ kconfig: [] });
 
+
+// 首先是把JSON里的默认值加进result里
+kconfigJSON.forEach(item => addResultRecursive(item));
+// 然后是把服务器的值填充进来，会把上面的默认值覆盖掉
 const response = result;
 for (const key in response.value) {
   const value = response.value[key];
@@ -14,6 +18,7 @@ for (const key in response.value) {
     return addDefaultRecursive(item, key, value)
   })
 }
+
 
 if (state.kconfig.length == 0) state.kconfig = kconfigJSON;
 
