@@ -11,7 +11,7 @@ declare namespace Types {
 
 // Kconfig各种声明项
 declare namespace Kconfig {
-  enum Type  {
+  enum Type {
     String = "string",
     Int = "int",
     Bool = "bool",
@@ -58,7 +58,7 @@ declare namespace Kconfig {
     title: string
     type: string
     inline?: boolean
-    hide? : boolean
+    hide?: boolean
   }
   // type为Choice时
   type ChoiceObj = {
@@ -71,6 +71,7 @@ declare namespace Kconfig {
     title: string
     type: string
     inline?: boolean
-    disabled? :boolean
+    disabled?: boolean
+    value?: string
   }
 }

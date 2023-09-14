@@ -57,11 +57,9 @@ const list = ref([]);
 watchEffect(() => {
   if (data.children.length == 0) return;
   list.value = data.children.reduce((accumulator, current) => {
-    console.log(current);
     const match = current?.name.match(/-id(\d+)-/);
     if (!match) return
     const currentId = current?.name.match(/-id(\d+)-/)[1];
-    console.log(accumulator);
 
     const exiting = accumulator.find(item => {
       const itemId = item[0].name.match(/-id(\d+)-/)[1];
@@ -155,12 +153,8 @@ const popChildren = (lastID) => {
 // 点击添加自定义项
 const addChildren = () => {
   const lastID = checkLastID();
-  const concatList = data.children.map(item => {
-    return recursive(item, lastID);
-  })
+  const concatList = data.children.map(item => recursive(item, lastID));
   data.children = data.children.concat(concatList.filter(item => item));
-  console.log(data.children);
-
 
 
   function recursive(obj, lastID) {
@@ -168,7 +162,11 @@ const addChildren = () => {
     let res = "";
     if (newItem.name.includes(`-id${lastID}-`)) {
       newItem.name = newItem.name.replace(/-id.+-/, `-id${lastID + 1}-`);
+      // 无法有默认值
       newItem.default = null;
+      newItem.value = null;
+      // newItem.value = newItem.default;
+
       res = newItem;
     }
     if (Array.isArray(res.children) && res.children.length > 0) {

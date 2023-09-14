@@ -15,12 +15,12 @@
         </template>
 
         <a-input-group compact class="w-600">
-          <a-select v-model:value="unitType">
+          <a-select v-model:value="unitType" :disabled="true">
             <a-select-option value="ten">十进制</a-select-option>
             <a-select-option value="sixteen">十六进制</a-select-option>
           </a-select>
-          <a-input v-model:value="inputVal" style="width: 50%;" @focus="onChange" @change="onChange" @blur="onBlur" :status="status"
-            :disabled="data.disabled" />
+          <a-input v-model:value="inputVal" style="width: 50%;" @focus="onChange" @change="onChange" @blur="onBlur"
+            :status="status" :disabled="data.disabled" />
         </a-input-group>
       </a-tooltip>
 
@@ -44,7 +44,7 @@ import { useInput } from '@/hooks/useInput'
 import { checkIfCanShow } from '@/utils/util';
 // 数据
 const { data } = defineProps<{ data: Kconfig.IntObj }>();
-const { changeResult } = useStore('result');
+const { changeResult, delResult } = useStore('result');
 const { flag } = useDepend(data);
 const { unitType, formatValue, tooltipFlag, inputVal, status, range, onChange } = useInput();
 
@@ -56,9 +56,19 @@ if (data.range && data.range.length > 1) {
 }
 
 inputVal.value = data.default;
+
+watchEffect(() => {
+  data.status && (status.value = data.status)
+})
+
 const onBlur = () => {
-  if(status.value) return;
-  changeResult(data.name, inputVal.value)
+  if (status.value)  {
+    data.value = "";
+    delResult(data.name)
+    return;
+  }
+  changeResult(data.name, inputVal.value);
+  data.value = inputVal.value;
 }
 </script>
 

@@ -27,14 +27,16 @@ const { data } = defineProps<{ data: Kconfig.BoolObj }>();
 const { changeResult, delResult } = useStore('result');
 const { flag } = useDepend(data);
 
-// 一些判断条件：
-
 // 双向绑定
 const inputVal = ref(data.default ? true : false);
+
 // 输入框改变事件
 const onChange = (e) => {
   e ? changeResult(data.name, 'y') : delResult(data.name);
+  data.value = e;
 }
+
+
 </script>
 
 <style lang="scss" scoped></style>

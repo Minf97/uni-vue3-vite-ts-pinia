@@ -1,3 +1,4 @@
+import { useDepend } from "@/hooks/useDepend";
 
 
 /**
@@ -60,7 +61,6 @@ export function addDefaultRecursive(obj, name, value) {
     obj.default = value;
   }
 
-
   if (Array.isArray(obj.children) && obj.children.length > 0) {
     for (const child of obj.children) {
       addDefaultRecursive(child, name, value);
@@ -71,7 +71,7 @@ export function addDefaultRecursive(obj, name, value) {
 }
 
 /**
- * 深度遍历，
+ * 深度遍历2，
  * @param obj 对象
  * @param name name值
  * @param value
@@ -85,6 +85,7 @@ export function addResultRecursive(obj) {
   }
   if (obj.default) {
     changeResult(obj.name, obj.default);
+    obj.value = obj.default;
   }
 
   if (Array.isArray(obj.children) && obj.children.length > 0) {
@@ -92,6 +93,41 @@ export function addResultRecursive(obj) {
       addResultRecursive(child);
     }
   }
+}
+
+/**
+ * 深度遍历3，
+ * @param obj 对象
+ * @param name name值
+ * @param value
+ * @returns
+ */
+export function treeRecursive(obj) {
+  const { flag } = useDepend(obj)
+  let flag1 = true;
+  if (obj.type == 'menu' || obj.type == 'menu2' || obj.type == 'bool') {
+    if (obj.type == 'menu2') {
+      console.log(obj, 6666);
+
+    }
+  }
+  else if (!obj.value && flag.value) {
+    obj.status = 'error';
+    flag1 = false;
+    console.log(obj);
+
+  }
+
+  if (Array.isArray(obj.children) && obj.children.length > 0) {
+    for (const child of obj.children) {
+      if (!treeRecursive(child)) {
+        flag1 = false;
+        break;
+      }
+    }
+  }
+
+  return flag1
 }
 
 
@@ -122,4 +158,10 @@ export function checkIsHex(val: string): boolean {
   const regex = /^0x[0-9A-Fa-f]+$/
   return regex.test(String(val));
 }
+
+
+export function removeEscapedQuotes(str) {
+  return str ? str.replace(/"/g, '') : '';
+}
+
 // recursive

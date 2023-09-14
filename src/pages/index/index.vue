@@ -2,11 +2,12 @@
 <script setup lang="ts">
 // @ts-nocheck
 import { kconfigJSON } from "./kconfig";
-import { checkIfCanShow, addDefaultRecursive, addResultRecursive } from '@/utils/util';
+import { checkIfCanShow, addDefaultRecursive, addResultRecursive, treeRecursive } from '@/utils/util';
+import { notification } from 'ant-design-vue';
+import { useDepend } from '@/hooks/useDepend'
 
 const { result } = useStore('result');
 const state = reactive({ kconfig: [] });
-
 
 // 首先是把JSON里的默认值加进result里
 kconfigJSON.forEach(item => addResultRecursive(item));
@@ -22,11 +23,67 @@ for (const key in response.value) {
 
 if (state.kconfig.length == 0) state.kconfig = kconfigJSON;
 
+// function validForm() {
+//   let flag1 = false;
+//   for (let i = 0; i < state.kconfig.length; i++) {
+//     const item = state.kconfig[i];
+
+//     if (item.type == 'menu' || item.type == 'menu2') {
+//       for (let j = 0; j < item.children.length; j++) {
+//         const child = item.children[j];
+//         flag1 = handle(child);
+//         if (flag1) break;
+//       }
+//     }
+//     else {
+//       flag1 = handle(item);
+
+//     }
+//     if (flag1) break;
+//   }
+//   return flag1;
+
+//   function handle(child) {
+//     if (child.type == 'menu' || child.type == 'menu2') { }
+//     else if (child.type == 'bool') { }
+//     else if (child.children && child.children.length > 0) {
+
+//     }
+//     if (!child.value) {
+//       const { flag } = useDepend(child);
+//       if (!flag.value) return false
+//       console.log(child);
+//       child.status = 'error';
+//       openNotificationWithIcon('warning');
+//       return true
+//     }
+//     return false
+//   }
+// }
+
+const openNotificationWithIcon = (type: string) => {
+  notification[type]({
+    message: '警告',
+    description:
+      '表单校验失败！仍有未填项',
+  });
+};
+
+const build = () => {
+
+  for (const item of state.kconfig) {
+    if(!treeRecursive(item)) {
+      openNotificationWithIcon('warning');
+      break;
+    }
+  }
+
+}
 </script>
 
 <template>
   <div class="pb-100">
-    {{ result }}
+    <text>{{ result }}</text>
 
     <div v-for="item in state.kconfig" :key="item.name">
       <stringComponent v-if="checkIfCanShow(item, 'string')" :data="item" />
@@ -38,7 +95,13 @@ if (state.kconfig.length == 0) state.kconfig = kconfigJSON;
     </div>
     <!-- 悬浮按钮 -->
     <a-back-top :visibility-height="100" />
+
+    <div class="text-center mt-200">
+      <a-button type="primary" size="large" @click="build">确定生成</a-button>
+    </div>
+
   </div>
+  <contextHolder />
 </template>
 
 <style scoped lang="scss"></style>

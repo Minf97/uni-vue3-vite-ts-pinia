@@ -2,6 +2,7 @@ export default defineStore(
   'result',
   () => {
     const result = ref({});
+    // const formList = ref({});
 
     const changeResult = (key: string, val) => {
       key = handleKey(key);
@@ -21,16 +22,17 @@ export default defineStore(
 
     return {
       result,
+      // formList,
       changeResult,
       delResult,
       findKey
     };
   },
-  // {
-  //   persist: {
-  //     enabled: true
-  //   }
-  // }
+  {
+    persist: {
+      enabled: true
+    }
+  }
 );
 
 function handleKey(key: string) {

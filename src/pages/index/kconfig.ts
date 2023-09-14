@@ -107,7 +107,7 @@ export const kconfigJSON = [
                       "id": "CL_ESP32_MODULE_ESP_HOME",
                       "name": "CL_ESP32_MODULE_ESP_HOME",
                       "range": null,
-                      "title": "ESP",
+                      "title": "ESP-HOME",
                       "type": "bool"
                   },
                   {
@@ -117,7 +117,7 @@ export const kconfigJSON = [
                       "id": "CL_ESP32_MODULE_ESP32_D0WD",
                       "name": "CL_ESP32_MODULE_ESP32_D0WD",
                       "range": null,
-                      "title": "ESP32",
+                      "title": "ESP32-D0WD",
                       "type": "bool"
                   }
               ],
@@ -209,7 +209,7 @@ export const kconfigJSON = [
                               "id": "CL_BUTTON_CONTROL_-id-_GPIO",
                               "name": "CL_BUTTON_CONTROL_-id-_GPIO",
                               "range": null,
-                              "title": "GPIO ",
+                              "title": "GPIO",
                               "type": "int",
                               "placement": "left"
                           },
@@ -221,7 +221,7 @@ export const kconfigJSON = [
                               "id": "_CL_BUTTON_CONTROL_-id-_TYPE_CLICK",
                               "name": "_CL_BUTTON_CONTROL_-id-_TYPE_CLICK",
                               "range": null,
-                              "title": "Click ",
+                              "title": "Click",
                               "type": "string",
                               "disabled": true,
                               "placement": "middle"
@@ -234,7 +234,7 @@ export const kconfigJSON = [
                               "id": "_CL_BUTTON_CONTROL_-id-_TYPE_DOUBLE",
                               "name": "_CL_BUTTON_CONTROL_-id-_TYPE_DOUBLE",
                               "range": null,
-                              "title": "Dublue ",
+                              "title": "Dublue",
                               "type": "string",
                               "disabled": true,
                               "placement": "middle"
@@ -247,7 +247,7 @@ export const kconfigJSON = [
                               "id": "_CL_BUTTON_CONTROL_-id-_TYPE_LONG",
                               "name": "_CL_BUTTON_CONTROL_-id-_TYPE_LONG",
                               "range": null,
-                              "title": "Long ",
+                              "title": "Long",
                               "type": "string",
                               "disabled": true,
                               "placement": "middle"
@@ -258,8 +258,8 @@ export const kconfigJSON = [
                                       "children": [],
                                       "depends_on": "<choice CL_BUTTON_CONTROL_-id-_CLICK_FUN>",
                                       "help": null,
-                                      "id": "CL_BUTTON_CONTROL_-id-_CLICK_FUN",
-                                      "name": "CL_BUTTON_CONTROL_-id-_CLICK_FUN",
+                                      "id": "CL_BUTTON_CONTROL_-id-_CLICK_FUN_ON",
+                                      "name": "CL_BUTTON_CONTROL_-id-_CLICK_FUN_ON",
                                       "range": null,
                                       "title": "on",
                                       "type": "bool"
@@ -268,8 +268,8 @@ export const kconfigJSON = [
                                       "children": [],
                                       "depends_on": "<choice CL_BUTTON_CONTROL_-id-_CLICK_FUN>",
                                       "help": null,
-                                      "id": "CL_BUTTON_CONTROL_-id-_CLICK_FUN",
-                                      "name": "CL_BUTTON_CONTROL_-id-_CLICK_FUN",
+                                      "id": "CL_BUTTON_CONTROL_-id-_CLICK_FUN_OFF",
+                                      "name": "CL_BUTTON_CONTROL_-id-_CLICK_FUN_OFF",
                                       "range": null,
                                       "title": "off",
                                       "type": "bool"
@@ -279,7 +279,7 @@ export const kconfigJSON = [
                               "help": null,
                               "id": "button-control-enable-button-control-button-fun-type-menu2--click-fun-placement-right-",
                               "name": "CL_BUTTON_CONTROL_-id-_CLICK_FUN",
-                              "title": "Click fun ",
+                              "title": "Click fun",
                               "type": "choice",
                               "placement": "right"
                           },
@@ -289,18 +289,18 @@ export const kconfigJSON = [
                                       "children": [],
                                       "depends_on": "<choice CL_BUTTON_CONTROL_-id-_DOUBLE_FUN>",
                                       "help": null,
-                                      "id": "CL_BUTTON_CONTROL_-id-_DOUBLE_FUN",
-                                      "name": "CL_BUTTON_CONTROL_-id-_DOUBLE_ON_ddd",
+                                      "id": "CL_BUTTON_CONTROL_-id-_DOUBLE_FUN_ON",
+                                      "name": "CL_BUTTON_CONTROL_-id-_DOUBLE_FUN_ON",
                                       "range": null,
-                                      "title": "onnkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk",
+                                      "title": "on",
                                       "type": "bool"
                                   },
                                   {
                                       "children": [],
                                       "depends_on": "<choice CL_BUTTON_CONTROL_-id-_DOUBLE_FUN>",
                                       "help": null,
-                                      "id": "CL_BUTTON_CONTROL_-id-_DOUBLE_FUN",
-                                      "name": "CL_BUTTON_CONTROL_-id-_DOUBLE_FUN",
+                                      "id": "CL_BUTTON_CONTROL_-id-_DOUBLE_FUN_OFF",
+                                      "name": "CL_BUTTON_CONTROL_-id-_DOUBLE_FUN_OFF",
                                       "range": null,
                                       "title": "off",
                                       "type": "bool"
@@ -310,7 +310,7 @@ export const kconfigJSON = [
                               "help": null,
                               "id": "button-control-enable-button-control-button-fun-type-menu2--double-fun-placement-right-",
                               "name": "CL_BUTTON_CONTROL_-id-_DOUBLE_FUN",
-                              "title": "Double fun ",
+                              "title": "Double fun",
                               "type": "choice",
                               "placement": "right"
                           },
@@ -320,8 +320,8 @@ export const kconfigJSON = [
                                       "children": [],
                                       "depends_on": "<choice CL_BUTTON_CONTROL_-id-_LONG_FUN>",
                                       "help": null,
-                                      "id": "CL_BUTTON_CONTROL_-id-_LONG_FUN",
-                                      "name": "CL_BUTTON_CONTROL_-id-_LONG_FUN",
+                                      "id": "CL_BUTTON_CONTROL_-id-_LONG_FUN_ON",
+                                      "name": "CL_BUTTON_CONTROL_-id-_LONG_FUN_ON",
                                       "range": null,
                                       "title": "on",
                                       "type": "bool"
@@ -330,8 +330,8 @@ export const kconfigJSON = [
                                       "children": [],
                                       "depends_on": "<choice CL_BUTTON_CONTROL_-id-_LONG_FUN>",
                                       "help": null,
-                                      "id": "CL_BUTTON_CONTROL_-id-_LONG_FUN",
-                                      "name": "CL_BUTTON_CONTROL_-id-_LONG_FUN",
+                                      "id": "CL_BUTTON_CONTROL_-id-_LONG_FUN_OFF",
+                                      "name": "CL_BUTTON_CONTROL_-id-_LONG_FUN_OFF",
                                       "range": null,
                                       "title": "off",
                                       "type": "bool"
@@ -341,14 +341,14 @@ export const kconfigJSON = [
                               "help": null,
                               "id": "button-control-enable-button-control-button-fun-type-menu2--long-fun-placement-right-",
                               "name": "CL_BUTTON_CONTROL_-id-_LONG_FUN",
-                              "title": "Long fun ",
+                              "title": "Long fun",
                               "type": "choice",
                               "placement": "right"
                           }
                       ],
                       "depends_on": "CL_BUTTON_CONTROL_ENABLED",
                       "id": "button-control-enable-button-control-button-fun-type-menu2-",
-                      "title": "Button fun ",
+                      "title": "Button fun",
                       "type": "menu2"
                   }
               ],
@@ -430,7 +430,7 @@ export const kconfigJSON = [
                       "id": "CL_REMOTE_CONTROL_-id-_CODE",
                       "name": "CL_REMOTE_CONTROL_-id-_CODE",
                       "range": null,
-                      "title": "Code ",
+                      "title": "Code",
                       "type": "int",
                       "placement": "left"
                   },
@@ -461,14 +461,14 @@ export const kconfigJSON = [
                       "help": null,
                       "id": "remote-control-remote-fun-type-menu2--fun-placement-right-",
                       "name": "CL_REMOTE_CONTROL_-id-_FUN",
-                      "title": "Fun ",
+                      "title": "Fun",
                       "type": "choice",
                       "placement": "right"
                   }
               ],
               "depends_on": "CL_REMOTE_CONTROL_ENABLED",
               "id": "remote-control-remote-fun-type-menu2-",
-              "title": "Remote fun ",
+              "title": "Remote fun",
               "type": "menu2"
           }
       ],

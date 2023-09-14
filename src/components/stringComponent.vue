@@ -5,7 +5,7 @@
     <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">{{ data.title }}:</div>
     <div class="flex-1">
       <a-input class="w-400" @change="onChange" v-model:value="inputVal" :placeholder="data.help || data.title"
-        allow-clear showCount :disabled="data.disabled" />
+        allow-clear :status="data.status" :showCount="!data.disabled" :disabled="data.disabled" />
     </div>
   </div>
   <!-- 特殊项 - children - 用于递归 -->
@@ -21,19 +21,22 @@
 <script setup lang="ts">
 // @ts-nocheck
 import { useDepend } from '@/hooks/useDepend';
-import { checkIfCanShow } from '@/utils/util';
+import { checkIfCanShow, removeEscapedQuotes } from '@/utils/util';
 // 数据
 const { data } = defineProps<{ data: Kconfig.StringObj }>();
 const { changeResult } = useStore('result')
-
-// 一些判断条件：
 const { flag } = useDepend(data);
 
 // 双向绑定
-const inputVal = ref(data.default)
+const inputVal = ref(removeEscapedQuotes(data.default));
+
+watch(inputVal, () => {
+  data.status = ''
+})
 // 输入框改变事件
 const onChange = () => {
-  changeResult(data.name, inputVal.value)
+  changeResult(data.name, `\"${inputVal.value}\"`)
+  data.value = inputVal.value;
 }
 </script>
 
