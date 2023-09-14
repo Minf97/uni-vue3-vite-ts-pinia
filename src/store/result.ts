@@ -28,11 +28,11 @@ export default defineStore(
       findKey
     };
   },
-  {
-    persist: {
-      enabled: true
-    }
-  }
+  // {
+  //   persist: {
+  //     enabled: true
+  //   }
+  // }
 );
 
 function handleKey(key: string) {
