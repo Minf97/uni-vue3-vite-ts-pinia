@@ -4,7 +4,6 @@
 import { kconfigJSON } from "./kconfig";
 import { checkIfCanShow, addDefaultRecursive, addResultRecursive, treeRecursive } from '@/utils/util';
 import { notification } from 'ant-design-vue';
-import { useDepend } from '@/hooks/useDepend'
 
 const { result } = useStore('result');
 const state = reactive({ kconfig: [] });
@@ -12,6 +11,7 @@ const state = reactive({ kconfig: [] });
 // 首先是把JSON里的默认值加进result里
 kconfigJSON.forEach(item => addResultRecursive(item));
 // 然后是把服务器的值填充进来，会把上面的默认值覆盖掉
+Request()
 const response = result;
 for (const key in response.value) {
   const value = response.value[key];
@@ -20,46 +20,7 @@ for (const key in response.value) {
   })
 }
 
-
 if (state.kconfig.length == 0) state.kconfig = kconfigJSON;
-
-// function validForm() {
-//   let flag1 = false;
-//   for (let i = 0; i < state.kconfig.length; i++) {
-//     const item = state.kconfig[i];
-
-//     if (item.type == 'menu' || item.type == 'menu2') {
-//       for (let j = 0; j < item.children.length; j++) {
-//         const child = item.children[j];
-//         flag1 = handle(child);
-//         if (flag1) break;
-//       }
-//     }
-//     else {
-//       flag1 = handle(item);
-
-//     }
-//     if (flag1) break;
-//   }
-//   return flag1;
-
-//   function handle(child) {
-//     if (child.type == 'menu' || child.type == 'menu2') { }
-//     else if (child.type == 'bool') { }
-//     else if (child.children && child.children.length > 0) {
-
-//     }
-//     if (!child.value) {
-//       const { flag } = useDepend(child);
-//       if (!flag.value) return false
-//       console.log(child);
-//       child.status = 'error';
-//       openNotificationWithIcon('warning');
-//       return true
-//     }
-//     return false
-//   }
-// }
 
 const openNotificationWithIcon = (type: string) => {
   notification[type]({

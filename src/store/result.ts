@@ -9,9 +9,20 @@ export default defineStore(
       result.value[key] = val;
       console.log("result赋值了:", key, val,);
     }
-    const delResult = (key: string) => {
-      key = handleKey(key);
-      delete result.value[key];
+    const delResult = (key: string, obj: null | Kconfig.children = null) => {
+      if(key) {
+        key = handleKey(key);
+        delete result.value[key];
+      }
+
+      if (obj) {
+        obj.value = null;
+        if (obj.children.length > 0) {
+          obj.children.map(item => {
+            delResult(item.name, item)
+          })
+        }
+      }
       console.log("result删除了键值:", key);
     }
 
@@ -28,11 +39,11 @@ export default defineStore(
       findKey
     };
   },
-  // {
-  //   persist: {
-  //     enabled: true
-  //   }
-  // }
+  {
+    persist: {
+      enabled: true
+    }
+  }
 );
 
 function handleKey(key: string) {

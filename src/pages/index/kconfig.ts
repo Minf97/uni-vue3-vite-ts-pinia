@@ -453,7 +453,7 @@ export const kconfigJSON = [
                               "id": "CL_REMOTE_CONTROL_-id-_FUN_OFF",
                               "name": "CL_REMOTE_CONTROL_-id-_FUN_OFF",
                               "range": null,
-                              "title": "off",
+                              "title": "offffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
                               "type": "bool"
                           }
                       ],

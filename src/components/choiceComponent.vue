@@ -8,7 +8,7 @@
     </a-tooltip>
 
     <div class="flex flex-1 items-center">
-      <a-select class="w-400" ref="select" v-model:value="inputVal" @change="onChange" :disabled="data.disabled">
+      <a-select class="w-100% max-w-800" ref="select" v-model:value="inputVal" @change="onChange" :disabled="data.disabled">
 
         <template v-for="(item) in data.children" :key="item.name">
           <a-select-option v-if="!item.hide" :value="item.name">{{ item.title
@@ -23,6 +23,7 @@
 <script setup lang="ts">
 import { useDepend } from '@/hooks/useDepend';
 
+
 // 数据
 const { data } = defineProps<{ data: Kconfig.ChoiceObj }>();
 const { changeResult, delResult, findKey } = useStore('result');
@@ -31,9 +32,15 @@ const { flag } = useDepend(data);
 // 一些判断条件：
 const inputVal = ref("");
 const toolTip = ref("");
-data.children.map(item => {
-  item.default && (inputVal.value = item.name) && (data.value = item.default)
-})
+// data.children.map(item => {
+//   item.default && (inputVal.value = item.name) && (data.value = item.default)
+// })
+
+watch(data, () => {
+  data.children.map(item => {
+    item.default && (inputVal.value = item.name) && (data.value = item.default)
+  })
+}, { immediate: true, deep: true})
 
 watch(inputVal, (newVal) => {
   toolTip.value = data.children.filter(item => item.name == newVal)[0]?.title

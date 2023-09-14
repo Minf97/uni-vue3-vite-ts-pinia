@@ -11,7 +11,7 @@
       <boolComponent v-if="checkIfCanShow(item, 'bool')" :data="item" />
       <choiceComponent v-if="checkIfCanShow(item, 'choice')" :data="item" />
       <menuComponent v-if="checkIfCanShow(item, 'menu')" :data="item" />
-      <menu2Component v-if="checkIfCanShow(item, 'menu2')" :data="item" />
+      <menu2Component v-if="checkIfCanShow(item, 'menu2')" :data="item" :isSpecial="true" />
     </div>
   </div>
 </template>

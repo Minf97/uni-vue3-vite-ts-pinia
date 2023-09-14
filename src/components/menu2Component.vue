@@ -1,5 +1,4 @@
 
-
 <template>
   <div>
     <div class="fs-50 fw-700 tracking-wide flex items-center justify-center pt-70" v-if="!isSpecial && flag">

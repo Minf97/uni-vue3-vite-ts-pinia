@@ -2,7 +2,7 @@
 
 <template>
   <div class="flex w-full pt-35" v-if="flag">
-    <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">{{ data.title }}:</div>
+    <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">{{ data.title }} {{ data.title ? ':' : '' }}</div>
     <div class="flex-1">
       <a-input class="w-400" @change="onChange" v-model:value="inputVal" :placeholder="data.help || data.title"
         allow-clear :status="data.status" :showCount="!data.disabled" :disabled="data.disabled" />

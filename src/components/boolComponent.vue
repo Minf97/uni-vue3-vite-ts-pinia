@@ -2,7 +2,7 @@
 
 <template>
   <div class="flex w-full pt-35 inline-block" v-if="flag">
-    <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">{{ data.title }}:</div>
+    <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">{{ data.title }} {{ data.title ? ':' : '' }}</div>
     <div class="flex flex-1 items-center">
       <a-switch @change="onChange" v-model:checked="inputVal" />
     </div>
@@ -32,7 +32,7 @@ const inputVal = ref(data.default ? true : false);
 
 // 输入框改变事件
 const onChange = (e) => {
-  e ? changeResult(data.name, 'y') : delResult(data.name);
+  e ? changeResult(data.name, 'y') : delResult(data.name, data);
   data.value = e;
 }
 

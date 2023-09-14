@@ -41,7 +41,7 @@ export function checkIfCanShow(data: Kconfig.children, type: Kconfig.Type) {
   if (type == 'menu') return data.title && (data.type == type);
   if (type == 'menu2') return data.title && (data.type == type);
 
-  return data.name && data.title && (data.type == type)
+  return data.name && (data.type == type)
 }
 
 
