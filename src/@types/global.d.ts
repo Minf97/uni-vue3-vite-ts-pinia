@@ -75,3 +75,14 @@ declare namespace Kconfig {
     value?: string
   }
 }
+
+
+type Query = {
+  CONFIG_CL_PRODUCT_ID: string
+  device_model_id: string
+  major_version: string
+  minor_version: string
+  previous_config_url: string
+  re_url: string
+  revision: string
+}

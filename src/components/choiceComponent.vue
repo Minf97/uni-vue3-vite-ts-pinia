@@ -8,7 +8,8 @@
     </a-tooltip>
 
     <div class="flex flex-1 items-center">
-      <a-select class="w-100% max-w-800" ref="select" v-model:value="inputVal" @change="onChange" :disabled="data.disabled">
+      <a-select class="w-100% max-w-800" ref="select" v-model:value="inputVal" @change="onChange"
+        :disabled="data.disabled">
 
         <template v-for="(item) in data.children" :key="item.name">
           <a-select-option v-if="!item.hide" :value="item.name">{{ item.title
@@ -22,6 +23,7 @@
 
 <script setup lang="ts">
 import { useDepend } from '@/hooks/useDepend';
+import { ref, watch } from 'vue';
 
 
 // 数据
@@ -32,15 +34,22 @@ const { flag } = useDepend(data);
 // 一些判断条件：
 const inputVal = ref("");
 const toolTip = ref("");
-// data.children.map(item => {
-//   item.default && (inputVal.value = item.name) && (data.value = item.default)
-// })
 
 watch(data, () => {
   data.children.map(item => {
-    item.default && (inputVal.value = item.name) && (data.value = item.default)
+    if (item.value) {
+      inputVal.value = item.name;
+      data.value = "y";
+    }
+    else {
+      if (item.default) {
+        inputVal.value = item.name;
+        data.value = item.default
+      }
+    }
   })
-}, { immediate: true, deep: true})
+  console.log("choice变化了", data.name, data);
+}, { immediate: true, deep: true })
 
 watch(inputVal, (newVal) => {
   toolTip.value = data.children.filter(item => item.name == newVal)[0]?.title
@@ -48,14 +57,14 @@ watch(inputVal, (newVal) => {
 // 双向绑定，用于显示
 watch(data.children, () => {
   if (inputVal.value) {
-    findKey(inputVal.value) ? '' : inputVal.value = '';
+    findKey(inputVal.value) ? '' : (inputVal.value = '');
   }
 }, { deep: true })
 
 // 输入框改变事件
 const onChange = (e) => {
   // 先全部删除，再把该键值置位
-  data.children.map(item => delResult(item.name));
+  data.children.map(item => delResult(item.name, item));
   changeResult(e, 'y');
   // choice也该补上值
   data.value = e;

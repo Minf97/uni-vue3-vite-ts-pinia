@@ -1,6 +1,6 @@
 const fs = require('fs')
 
-const pagesStr = fs.readFileSync('./src/pages.json', 'utf-8');
+const pagesStr = fs.readFileSync('../src/pages.json', 'utf-8');
 const pagesJson = JSON.parse(pagesStr);
 // tabBar页面
 const tabBarPages = pagesJson.pages.map((i) => {
@@ -25,7 +25,7 @@ const subPages = pagesJson.subPackages.flatMap((i) => {
 // 当前已有页面
 const pages = [...tabBarPages, ...subPages];
 // 当前已创建文件
-const filesList = fs.readdirSync('./src/pages');
+const filesList = fs.readdirSync('../src/pages');
 // 获取需要新增的页面  =>取差集
 const newPages = pages.filter((i) => !filesList.includes(i.name));
 // 添加新路由
@@ -39,13 +39,13 @@ addPages(newPages);
 function addPages(pages) {
   for (const page of pages) {
     const { name, title } = page;
-    const dirPath = `./src/pages/${name}`;
+    const dirPath = `../src/pages/${name}`;
     fs.mkdirSync(dirPath);
     const filePath = `${dirPath}/${name}.vue`;
     const createStream = fs.createWriteStream(filePath);
 
     const template =
-    `
+      `
       <template>
         <view>${title}</view>
       </template>

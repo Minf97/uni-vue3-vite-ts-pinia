@@ -1,4 +1,5 @@
 import { hexToDecimal, decimalToHex } from '@/utils/util';
+import { ref, reactive, watch } from 'vue';
 
 
 export const useInput = () => {
@@ -64,7 +65,7 @@ export const useInput = () => {
 
 
 function checkNumber(input) {
-  if(!input) return false
+  if (!input) return false
   const trimmedInput = input.replace(/\s/g, ''); // 去除空格
   const regexDecimal = /^[0-9]+$/; // 纯数字的正则表达式
   const regexHex = /^0x[0-9A-Fa-f]+$/; // 十六进制的正则表达式

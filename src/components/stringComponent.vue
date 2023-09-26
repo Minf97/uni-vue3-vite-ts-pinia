@@ -22,6 +22,7 @@
 // @ts-nocheck
 import { useDepend } from '@/hooks/useDepend';
 import { checkIfCanShow, removeEscapedQuotes } from '@/utils/util';
+import { ref, watch } from 'vue';
 // 数据
 const { data } = defineProps<{ data: Kconfig.StringObj }>();
 const { changeResult } = useStore('result')

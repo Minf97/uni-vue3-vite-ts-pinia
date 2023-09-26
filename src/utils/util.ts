@@ -31,6 +31,36 @@ export function handleDepends_on(str: string | null) {
 
 
 /**
+ * 处理depends_on字段的内容
+ * 有五种可能性:`null`、`name`、`<choice name>`、`name1 && <choice name2>`、`name1 && name2 && <choice name3>`
+ * @param str depends_on字段
+ * @returns [name1, name2]
+ */
+export function handleDepends_on1(str: string | null) {
+  let result: any[] = [];
+  const regex = /<[^<>]*>/;
+
+  // null
+  if (!str) return result;
+  // 存在 &&
+  if (str.includes('&&')) {
+    const a = str
+      .split('&&')
+      .filter(item => item.trim() && !regex.test(item))
+      .map(item => item.replace(/\s*/g, ''));
+
+    result = result.concat(a)
+  }
+  // 不存在 &&
+  else {
+    const match = str.match(regex);
+    if (!match) return [str];
+    result.push(match[1]); // 提取匹配到的内容
+  }
+  return result;
+}
+
+/**
  * 检查是否可以渲染该type组件
  * @param data 待检查的数据
  * @param type 类型
@@ -108,14 +138,45 @@ export function treeRecursive(obj) {
   if (obj.type == 'menu' || obj.type == 'menu2' || obj.type == 'bool') {
     if (obj.type == 'menu2') {
       console.log(obj, 6666);
-
     }
   }
   else if (!obj.value && flag.value) {
     obj.status = 'error';
     flag1 = false;
-    console.log(obj);
+    console.log(obj, "校验值失败！该项值为空");
+  }
 
+  if (Array.isArray(obj.children) && obj.children.length > 0) {
+    for (const child of obj.children) {
+      if (!treeRecursive(child)) {
+        flag1 = false;
+        break;
+      }
+    }
+  }
+
+  return flag1
+}
+
+/**
+ * 深度遍历4，查找树节点
+ * @param obj 对象
+ * @param name name值
+ * @param value
+ * @returns
+ */
+export function findTreeRecursive(obj) {
+  const { flag } = useDepend(obj)
+  let flag1 = true;
+  if (obj.type == 'menu' || obj.type == 'menu2' || obj.type == 'bool') {
+    if (obj.type == 'menu2') {
+      console.log(obj, 6666);
+    }
+  }
+  else if (!obj.value && flag.value) {
+    obj.status = 'error';
+    flag1 = false;
+    console.log(obj, "校验值失败！该项值为空");
   }
 
   if (Array.isArray(obj.children) && obj.children.length > 0) {
@@ -165,3 +226,17 @@ export function removeEscapedQuotes(str) {
 }
 
 // recursive
+
+export function parseQueryParams(url) {
+  const queryString = url.split('?')[1]; // 获取 "?" 后面的查询参数部分
+  const params = new URLSearchParams(queryString); // 创建 URLSearchParams 对象
+
+  const queryParams = {}; // 创建空对象存储查询参数
+
+  // 遍历查询参数，将其存储到对象中
+  for (const [key, value] of params) {
+    queryParams[key] = value;
+  }
+
+  return queryParams; // 返回查询参数对象
+}

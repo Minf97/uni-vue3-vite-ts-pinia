@@ -1,10 +1,12 @@
 {
   "pages": [
+
     {
       "name": "index",
       "path": "pages/index/index",
       "style": {
-        "navigationBarTitleText": "首页"
+        "navigationBarTitleText": "Kconfig表单编译平台",
+        "navigationBarBackgroundColor": "#1AA86C"
       }
     },
     {

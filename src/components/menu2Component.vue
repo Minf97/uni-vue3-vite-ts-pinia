@@ -9,7 +9,7 @@
     </div>
     <div class="w-80% m-auto">
       <a-row v-for="a in list">
-        <a-col :span="8" v-for="n in ['left', 'middle', 'right']">
+        <a-col :span="24 / colList.length" v-for="n in colList">
           <div v-for="item in a">
             <stringComponent v-if="checkIfCanShow(item, 'string') && item.placement == n" :data="item" />
             <intComponent v-if="checkIfCanShow(item, 'int') && item.placement == n" :data="item" />
@@ -37,6 +37,7 @@ import { deepClone } from '@/utils/clone';
 import { checkIfCanShow } from '@/utils/util';
 import { PlusCircleFilled, DeleteFilled } from '@ant-design/icons-vue';
 import { NotificationPlacement, notification } from 'ant-design-vue';
+import { ref,watchEffect,computed } from 'vue';
 // 数据
 const { data, isSpecial } = defineProps<{ data: Kconfig.BoolObj, isSpecial?: boolean }>();
 const [api, contextHolder] = notification.useNotification();
@@ -73,6 +74,16 @@ watchEffect(() => {
     return accumulator
   }, [])
 })
+
+const colList = computed(() => {
+  const set = new Set<string>();
+  list.value.map(item => {
+    item.map(e => set.add(e.placement))
+  })
+  return [...set]
+})
+console.log(colList.value);
+
 
 
 function recursiveAddResult(obj) {

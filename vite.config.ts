@@ -3,6 +3,7 @@ import uni from '@dcloudio/vite-plugin-uni';
 import AutoImportTypes from 'auto-import-types';
 import PiniaAutoRefs from 'pinia-auto-refs';
 import Unocss from 'unocss/vite';
+
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { defineConfig } from 'vite';
@@ -22,19 +23,21 @@ export default defineConfig({
     AutoImport({
       dts: 'src/auto-imports.d.ts',
       imports: [
-        'vue',
+        // 'vue',
         'uni-app',
         'pinia',
         {
           '@/helper/pinia-auto-refs': ['useStore']
         }
       ],
+      resolvers: [],
       exclude: ['createApp'],
       eslintrc: {
         enabled: true
       }
     }),
     Components({
+      resolvers: [],
       extensions: ['vue'],
       dts: 'src/components.d.ts'
     }),

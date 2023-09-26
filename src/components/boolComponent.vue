@@ -22,6 +22,7 @@
 // @ts-nocheck
 import { useDepend } from '@/hooks/useDepend';
 import { checkIfCanShow } from '@/utils/util';
+import { ref } from 'vue';
 // 数据
 const { data } = defineProps<{ data: Kconfig.BoolObj }>();
 const { changeResult, delResult } = useStore('result');

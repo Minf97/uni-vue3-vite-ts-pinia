@@ -58,10 +58,11 @@
     "@dcloudio/uni-mp-toutiao": "3.0.0-3070320230222002",
     "@dcloudio/uni-mp-weixin": "3.0.0-3070320230222002",
     "@dcloudio/uni-quickapp-webview": "3.0.0-3070320230222002",
-    "ant-design-vue": "^4.0.2",
+    "ant-design-vue": "^4.0.3",
     "pinia": "2.0.33",
     "pinia-auto-refs": "0.0.6",
     "pinia-plugin-persist-uni": "1.2.0",
+    "python-shell": "^5.0.0",
     "vue": "3.2.47"
   },
   "devDependencies": {

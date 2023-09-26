@@ -1,10 +1,15 @@
+import { reactive } from "vue";
+import {handleDepends_on} from "@/utils/util"
+
 export default defineStore({
   id: 'app',
   state: () => {
     return {
-      systemInfo: {}
+      systemInfo: {},
+      state: reactive({ kconfig: [] })
     } as {
       systemInfo: UniApp.GetSystemInfoResult;
+      state: { kconfig: [] }
     };
   },
   actions: {
@@ -13,6 +18,44 @@ export default defineStore({
       const systemInfo = uni.getSystemInfoSync();
       Object.assign(this.systemInfo, systemInfo);
       return systemInfo;
-    }
+    },
+    findTreeNode(name) {
+      for (let i = 0; i < this.state.kconfig.length; i++) {
+        const node = this.state.kconfig[i];
+        const targetNode = recursive(node, name);
+
+        if (targetNode) {
+          return targetNode
+        }
+      }
+
+      function recursive(node, name) {
+        if (node.name === name) {
+          console.log(node.name, name, 9999);
+          return node;
+        }
+        if (node.children.length > 0) {
+          for (const child of node.children) {
+            const targetNode = recursive(child, name);
+            if (targetNode) {
+              return targetNode;
+            }
+          }
+        }
+        return null
+      }
+    },
+
+    findDependChild(name) {
+
+
+
+      for(let i = 0; i < this.state.kconfig.length; i ++) {
+        const node = this.state.kconfig[i];
+        if(handleDepends_on(node[depends_on]).includes(name)) {
+
+        }
+      }
+    },
   }
 });

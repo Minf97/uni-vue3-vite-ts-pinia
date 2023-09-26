@@ -2,49 +2,104 @@
 <script setup lang="ts">
 // @ts-nocheck
 import { kconfigJSON } from "./kconfig";
-import { checkIfCanShow, addDefaultRecursive, addResultRecursive, treeRecursive } from '@/utils/util';
+import { checkIfCanShow, addDefaultRecursive, addResultRecursive, treeRecursive, parseQueryParams } from '@/utils/util';
 import { notification } from 'ant-design-vue';
+import { toRaw } from "vue";
+import apiTest from "@/api/apiTest"
 
 const { result } = useStore('result');
-const state = reactive({ kconfig: [] });
+const { state } = useStore('app')
+// query传参
+const query: Query = parseQueryParams(window.location.href);
 
 // 首先是把JSON里的默认值加进result里
-kconfigJSON.forEach(item => addResultRecursive(item));
-// 然后是把服务器的值填充进来，会把上面的默认值覆盖掉
-Request()
-const response = result;
-for (const key in response.value) {
-  const value = response.value[key];
-  state.kconfig = kconfigJSON.map(item => {
-    return addDefaultRecursive(item, key, value)
-  })
-}
+apiTest.getKconfig(query.CONFIG_CL_PRODUCT_ID).then(({ kconfig }) => {
 
-if (state.kconfig.length == 0) state.kconfig = kconfigJSON;
+  kconfig.forEach(item => addResultRecursive(item));
+  // 然后是把服务器的值填充进来，会把上面的默认值覆盖掉
+  apiTest.getLastCompileJSON(query.device_model_id).then(res => {
+    let config = {};
+    if (res) {
+      if(res.formconfig) {
+        config = res.formconfig
+      }
+    }
+    console.log(res, "res");
+    console.log(config, "config!!!");
+    for (const key in config) {
+      const value = config[key];
+      state.value.kconfig = kconfig.map(item => {
+        return addDefaultRecursive(item, key, value)
+      })
+    }
+  });
+})
 
-const openNotificationWithIcon = (type: string) => {
+const openNotificationWithIcon = (type: string, message: string, description: string) => {
   notification[type]({
-    message: '警告',
-    description:
-      '表单校验失败！仍有未填项',
+    message, description
   });
 };
 
 const build = () => {
-
-  for (const item of state.kconfig) {
-    if(!treeRecursive(item)) {
-      openNotificationWithIcon('warning');
-      break;
+  // 表单校验
+  for (const item of state.value.kconfig) {
+    if (!treeRecursive(item)) {
+      openNotificationWithIcon('warning', '警告!', '表单校验失败！仍有未填项');
+      return;
     }
   }
-
+  // 加入 y: 1
+  const postForm = { ...result.value, ...{ CONFIG_CL_PRODUCT_ID: query.CONFIG_CL_PRODUCT_ID } }
+  // 上传表单
+  apiTest.uploadCompile(query, postForm, postForm)
+    .then((res) => {
+      console.log(res);
+      // window.location.href = query.re_url;
+    })
+    .catch(() => openNotificationWithIcon('error', '错误!', '上传表单失败! 请联系开发人员'))
 }
 </script>
 
 <template>
   <div class="pb-100">
     <text>{{ result }}</text>
+    <!-- 开发分支 -->
+    <!-- <div class="flex w-full pt-35">
+      <a-tooltip placement="bottomRight">
+        <template #title>{{ toolTip }}</template>
+        <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">开发分支:</div>
+      </a-tooltip>
+
+      <div class="flex flex-1 items-center">
+        <a-select class="w-100% max-w-800" ref="select" v-model:value="branch" @change="onChange">
+          <a-select-option value="release">release</a-select-option>
+          <a-select-option value="develop">develop</a-select-option>
+        </a-select>
+      </div>
+    </div> -->
+    <!-- 主版本 -->
+    <div class="flex w-full pt-35">
+      <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">主版本</div>
+      <div class="flex-1">
+        <a-input class="w-400" v-model:value="query.major_version" />
+      </div>
+    </div>
+    <!-- 功能版本 -->
+    <div class="flex w-full pt-35">
+      <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">功能版本</div>
+      <div class="flex-1">
+        <a-input class="w-400" v-model:value="query.minor_version" />
+      </div>
+    </div>
+    <!-- bug修改版本 -->
+    <div class="flex w-full pt-35">
+      <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">bug修改版本</div>
+      <div class="flex-1">
+        <a-input class="w-400" v-model:value="query.revision" />
+      </div>
+    </div>
+    <hr style="margin-top: 100px;" />
 
     <div v-for="item in state.kconfig" :key="item.name">
       <stringComponent v-if="checkIfCanShow(item, 'string')" :data="item" />
@@ -60,7 +115,6 @@ const build = () => {
     <div class="text-center mt-200">
       <a-button type="primary" size="large" @click="build">确定生成</a-button>
     </div>
-
   </div>
   <contextHolder />
 </template>

@@ -15,6 +15,7 @@ function reject(err: { errno: number; errmsg: string }) {
 
     default:
       uni.showToast({
+        icon: 'error',
         title: errmsg
       });
       break;
@@ -22,7 +23,8 @@ function reject(err: { errno: number; errmsg: string }) {
 }
 
 // h5环境开启代理
-const apiBaseUrl = isH5 && isDevelopment ? '/api' : env.apiBaseUrl;
+// const apiBaseUrl = isH5 && isDevelopment ? '/api' : env.apiBaseUrl;
+const apiBaseUrl = env.apiBaseUrl;
 
 function baseRequest(
   method:
@@ -38,32 +40,26 @@ function baseRequest(
   url: string,
   data: { isLoading: any }
 ) {
+  console.log(data,666);
+
   return new Promise((resolve) => {
-    showLoading(data.isLoading);
+    showLoading(true);
     delete data.isLoading;
     let responseDate: unknown;
     uni.request({
       url: apiBaseUrl + url,
       method,
       timeout: 20000,
-      header: {
-        'content-type':
-          method === 'GET'
-            ? 'application/json; charset=utf-8'
-            : 'application/x-www-form-urlencoded'
-      },
+
       data,
       success: (res: any) => {
-        if (res.statusCode >= 200 && res.statusCode < 400) {
-          if (res.data.errno === 0) {
-            responseDate = res.data;
-          } else {
-            reject(res.data);
-          }
-        } else {
+        if(res.data.ret === '1') {
+          responseDate = res.data.info;
+        }
+        else {
           reject({
             errno: -1,
-            errmsg: '抢购火爆，稍候片刻！'
+            errmsg: res.data.desc
           });
         }
       },
@@ -85,14 +81,11 @@ function baseRequest(
 const http = {
   get: <T>(api: string, params: any) =>
     baseRequest('GET', api, {
-      ...getCommonParams(),
+      // ...getCommonParams(),
       ...params
     }) as Http.Response<T>,
   post: <T>(api: string, params: any) =>
-    baseRequest('POST', api, {
-      ...getCommonParams(),
-      ...params
-    }) as Http.Response<T>
+    baseRequest('POST', api, params) as Http.Response<T>
 };
 
 export default http;

@@ -1,23 +1,39 @@
+import { valueType } from "ant-design-vue/es/statistic/utils";
+
 const apiEnv: ApiEnv = 'dev';
 
 const envMap = {
   dev: {
-    baseUrl: 'http://m.dev.xxx.com',
-    apiBaseUrl: 'https://m.devapi.xxx.com'
+    baseUrl: '',
+    apiBaseUrl: ''
   },
   beta: {
     baseUrl: 'http://m.beta.xxx.com',
     apiBaseUrl: 'https://m.betaapi.xxx.com'
   },
   prod: {
-    baseUrl: 'https://m.xxx.com',
-    apiBaseUrl: 'https://m.api.xxx.com'
+    baseUrl: '',
+    apiBaseUrl: ''
   },
   local: {
     baseUrl: 'http://m.dev.xxx.com',
     apiBaseUrl: 'https://m.devapi.xxx.com'
   }
 };
+
+
+// type demo = {
+//   demo1: {
+//     name: string
+//   }
+//   demo2: {
+//     name: string
+//   }
+// }
+
+// const test:keyof demo = ""
+
+
 
 type ApiEnv = keyof typeof envMap;
 type Env<T extends ApiEnv> = {

@@ -42,6 +42,7 @@
 import { useDepend } from '@/hooks/useDepend';
 import { useInput } from '@/hooks/useInput'
 import { checkIfCanShow } from '@/utils/util';
+import { watchEffect } from 'vue';
 // 数据
 const { data } = defineProps<{ data: Kconfig.IntObj }>();
 const { changeResult, delResult } = useStore('result');
@@ -54,6 +55,9 @@ if (data.range && data.range.length > 1) {
   range.min = data.range[0];
   range.max = data.range[1];
 }
+
+// console.log(data, "intData7666");
+
 
 inputVal.value = data.default;
 
