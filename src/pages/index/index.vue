@@ -4,33 +4,41 @@
 import { kconfigJSON } from "./kconfig";
 import { checkIfCanShow, addDefaultRecursive, addResultRecursive, treeRecursive, parseQueryParams } from '@/utils/util';
 import { notification } from 'ant-design-vue';
-import { toRaw } from "vue";
 import apiTest from "@/api/apiTest"
+import { ref, reactive } from "vue";
 
 const { result } = useStore('result');
-const { state } = useStore('app')
+const { state } = useStore('app');
+const CONFIG_CL_DEV_BRANCH = ref("release")
 // query传参
-const query: Query = parseQueryParams(window.location.href);
+const query = reactive<Query>(parseQueryParams(window.location.href));
 
 // 首先是把JSON里的默认值加进result里
-apiTest.getKconfig(query.CONFIG_CL_PRODUCT_ID).then(({ kconfig }) => {
-
-  kconfig.forEach(item => addResultRecursive(item));
+apiTest.getKconfig(query.CONFIG_CL_PRODUCT_ID).then((res) => {
+  let kconfig = res?.kconfig;
+  if (!kconfig) {
+    kconfig = kconfigJSON;
+  }
+  kconfig?.forEach(item => addResultRecursive(item));
   // 然后是把服务器的值填充进来，会把上面的默认值覆盖掉
   apiTest.getLastCompileJSON(query.device_model_id).then(res => {
     let config = {};
     if (res) {
-      if(res.formconfig) {
+      if (res.formconfig) {
         config = res.formconfig
       }
     }
-    console.log(res, "res");
     console.log(config, "config!!!");
-    for (const key in config) {
-      const value = config[key];
-      state.value.kconfig = kconfig.map(item => {
-        return addDefaultRecursive(item, key, value)
-      })
+    if (Object.keys(config).length == 0) {
+      state.value.kconfig = kconfig;
+    }
+    else {
+      for (const key in config) {
+        const value = config[key];
+        state.value.kconfig = kconfig.map(item => {
+          return addDefaultRecursive(item, key, value)
+        })
+      }
     }
   });
 })
@@ -50,7 +58,7 @@ const build = () => {
     }
   }
   // 加入 y: 1
-  const postForm = { ...result.value, ...{ CONFIG_CL_PRODUCT_ID: query.CONFIG_CL_PRODUCT_ID } }
+  const postForm = { ...result.value, ...{ CONFIG_CL_PRODUCT_ID: query.CONFIG_CL_PRODUCT_ID, CONFIG_CL_DEV_BRANCH: CONFIG_CL_DEV_BRANCH.value } }
   // 上传表单
   apiTest.uploadCompile(query, postForm, postForm)
     .then((res) => {
@@ -65,19 +73,19 @@ const build = () => {
   <div class="pb-100">
     <text>{{ result }}</text>
     <!-- 开发分支 -->
-    <!-- <div class="flex w-full pt-35">
+    <div class="flex w-full pt-35">
       <a-tooltip placement="bottomRight">
         <template #title>{{ toolTip }}</template>
         <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">开发分支:</div>
       </a-tooltip>
 
       <div class="flex flex-1 items-center">
-        <a-select class="w-100% max-w-800" ref="select" v-model:value="branch" @change="onChange">
+        <a-select class="w-100% max-w-800" ref="select" v-model:value="CONFIG_CL_DEV_BRANCH">
           <a-select-option value="release">release</a-select-option>
           <a-select-option value="develop">develop</a-select-option>
         </a-select>
       </div>
-    </div> -->
+    </div>
     <!-- 主版本 -->
     <div class="flex w-full pt-35">
       <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">主版本</div>

@@ -15,11 +15,13 @@ export const useDepend = (data) => {
       if (!result.value[item]) setFlag(false)
     })
 
-    // 针对type
+    // 针对choice
     if (data.type == 'choice') {
       data.children.forEach((item, index) => {
         const childDependList = handleDepends_on(item.depends_on);
+        console.log(childDependList);
         childDependList.map(item => {
+
           if (!result.value[item]) {
             delResult(data.children[index].name);
             data.children[index].hide = true;

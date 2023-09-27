@@ -7,41 +7,57 @@ export default defineStore(
   () => {
     const result = ref({});
     const { findTreeNode, state } = useStore('app')
-
+    // 赋值
     const changeResult = (key: string, val) => {
       key = handleKey(key);
       result.value[key] = val;
       console.log("result赋值了:", key, val,);
     }
-
-
+    // 删除键值
     const delResult = (key: string, obj: null | Kconfig.children = null) => {
       if (key) {
         key = handleKey(key);
         delete result.value[key];
       }
 
-      const nameList = [];
+      // const nameList = [];
+      const nameList = new Set();
+
       if (obj) {
         obj.value = null;
         obj.default = null;
         // 子依赖项要删除
         function findDependChild(arr, name) {
-          nameList.push(name);
+          let realName = name;
+          if (name.match(/-id[\w\d]+-/)) {
+            realName = name.replace(/-id[\w\d]+-/, '-id-');
+          }
+          nameList.add(realName);
           for (let i = 0; i < arr.length; i++) {
             const node = arr[i];
             const dependsList = handleDepends_on1(node.depends_on);
-            const intersection = findIntersection(dependsList, nameList);
-            if (intersection) {
-              nameList.push(node.name);
-              node.value = null;
-              node.default = null;
-              if (node.name) {
-                const nodeKey = handleKey(node.name);
-                delete result.value[nodeKey];
-                console.log(node, nodeKey, "删除子依赖项的key");
-              }
+            const intersection = findIntersection(dependsList, Array.from(nameList));
 
+            if (intersection) {
+              // console.log(intersection, intersection.filter(item => item));
+              // intersection有可能是 [undefined]
+              if (intersection.filter(item => item).length > 0) {
+                node.value = null;
+                node.default = null;
+                node.clearFocus = true;
+                if (node.name) {
+                  let realName = node.name;
+                  if (node.name.match(/-id[\w\d]+-/)) {
+                    realName = node.name.replace(/-id[\w\d]+-/, '-id-');
+                  }
+                  nameList.add(realName);
+                  const nodeKey = handleKey(node.name);
+                  delete result.value[nodeKey];
+                  console.log(node, nodeKey, "删除子依赖项的key");
+                }
+              } else {
+                console.log(dependsList, nameList, intersection, node.name);
+              }
             }
             if (node.children.length > 0) {
               findDependChild(node.children, name);
@@ -81,11 +97,6 @@ export default defineStore(
       delResult,
       findKey
     };
-  },
-  {
-    persist: {
-      enabled: true
-    }
   }
 );
 

@@ -9,7 +9,7 @@
 
     <div class="flex flex-1 items-center">
       <a-select class="w-100% max-w-800" ref="select" v-model:value="inputVal" @change="onChange"
-        :disabled="data.disabled">
+        :disabled="data.disabled" :status="data.status">
 
         <template v-for="(item) in data.children" :key="item.name">
           <a-select-option v-if="!item.hide" :value="item.name">{{ item.title
@@ -25,7 +25,6 @@
 import { useDepend } from '@/hooks/useDepend';
 import { ref, watch } from 'vue';
 
-
 // 数据
 const { data } = defineProps<{ data: Kconfig.ChoiceObj }>();
 const { changeResult, delResult, findKey } = useStore('result');
@@ -35,7 +34,12 @@ const { flag } = useDepend(data);
 const inputVal = ref("");
 const toolTip = ref("");
 
-watch(data, () => {
+watch(data, (newVal) => {
+  console.log(newVal.name, newVal.clearFocus, "choice更新", inputVal.value);
+  if(data.clearFocus) {
+    inputVal.value = "";
+    return;
+  }
   data.children.map(item => {
     if (item.value) {
       inputVal.value = item.name;
@@ -48,11 +52,12 @@ watch(data, () => {
       }
     }
   })
-  console.log("choice变化了", data.name, data);
 }, { immediate: true, deep: true })
 
 watch(inputVal, (newVal) => {
-  toolTip.value = data.children.filter(item => item.name == newVal)[0]?.title
+  toolTip.value = data.children.filter(item => item.name == newVal)[0]?.title;
+  // 有输入就消除警告
+  data.status = ""
 }, { immediate: true })
 // 双向绑定，用于显示
 watch(data.children, () => {
@@ -64,8 +69,13 @@ watch(data.children, () => {
 // 输入框改变事件
 const onChange = (e) => {
   // 先全部删除，再把该键值置位
-  data.children.map(item => delResult(item.name, item));
+  data.children.map(item => {
+    if (item.name !== e) {
+      delResult(item.name, item)
+    }
+  });
   changeResult(e, 'y');
+  data.clearFocus = false;
   // choice也该补上值
   data.value = e;
 }

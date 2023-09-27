@@ -55,7 +55,7 @@ export function handleDepends_on1(str: string | null) {
   else {
     const match = str.match(regex);
     if (!match) return [str];
-    result.push(match[1]); // 提取匹配到的内容
+    result.push(str.match(/<choice\s+([^>]+)>/)[1]); // 提取匹配到的内容
   }
   return result;
 }
@@ -140,7 +140,13 @@ export function treeRecursive(obj) {
       console.log(obj, 6666);
     }
   }
-  else if (!obj.value && flag.value) {
+  else if (
+    // 没有填写值
+    (!obj.value || !obj.value.replace(/""/g, "")) &&
+    // 不是禁用项
+    !obj.disabled &&
+    flag.value
+  ) {
     obj.status = 'error';
     flag1 = false;
     console.log(obj, "校验值失败！该项值为空");

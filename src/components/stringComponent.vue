@@ -2,7 +2,8 @@
 
 <template>
   <div class="flex w-full pt-35" v-if="flag">
-    <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">{{ data.title }} {{ data.title ? ':' : '' }}</div>
+    <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">{{ data.title }} {{ data.title ? ':' :
+      '' }}</div>
     <div class="flex-1">
       <a-input class="w-400" @change="onChange" v-model:value="inputVal" :placeholder="data.help || data.title"
         allow-clear :status="data.status" :showCount="!data.disabled" :disabled="data.disabled" />
@@ -30,6 +31,12 @@ const { flag } = useDepend(data);
 
 // 双向绑定
 const inputVal = ref(removeEscapedQuotes(data.default));
+console.log(flag.value, data.name, data.value, "string");
+
+watch(data, () => {
+  console.log(data, "string更新");
+
+}, { deep: true })
 
 watch(inputVal, () => {
   data.status = ''
