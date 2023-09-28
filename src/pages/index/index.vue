@@ -28,7 +28,7 @@ apiTest.getKconfig(query.CONFIG_CL_PRODUCT_ID).then((res) => {
         config = res.formconfig
       }
     }
-    console.log(config, "config!!!");
+    config = result.value;
     if (Object.keys(config).length == 0) {
       state.value.kconfig = kconfig;
     }
@@ -39,11 +39,12 @@ apiTest.getKconfig(query.CONFIG_CL_PRODUCT_ID).then((res) => {
           return addDefaultRecursive(item, key, value)
         })
       }
+      Object.assign(result.value, config);
     }
   });
 })
 
-const openNotificationWithIcon = (type: string, message: string, description: string) => {
+const openNotificationWithIcon = (type: 'success' | 'error' | 'info' | 'warning', message: string, description: string) => {
   notification[type]({
     message, description
   });
@@ -63,7 +64,10 @@ const build = () => {
   apiTest.uploadCompile(query, postForm, postForm)
     .then((res) => {
       console.log(res);
-      // window.location.href = query.re_url;
+      if(res) {
+        openNotificationWithIcon('success', '成功', '上传表单成功！');
+        // window.location.href = query.re_url;
+      }
     })
     .catch(() => openNotificationWithIcon('error', '错误!', '上传表单失败! 请联系开发人员'))
 }

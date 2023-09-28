@@ -35,7 +35,7 @@ const inputVal = ref("");
 const toolTip = ref("");
 
 watch(data, (newVal) => {
-  console.log(newVal.name, newVal.clearFocus, "choice更新", inputVal.value);
+  console.log(newVal.name, newVal, "choice更新", inputVal.value);
   if(data.clearFocus) {
     inputVal.value = "";
     return;

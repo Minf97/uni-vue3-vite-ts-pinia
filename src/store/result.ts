@@ -97,6 +97,11 @@ export default defineStore(
       delResult,
       findKey
     };
+  },
+  {
+    persist: {
+      enabled: true
+    }
   }
 );
 

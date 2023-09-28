@@ -83,13 +83,19 @@ export function checkIfCanShow(data: Kconfig.children, type: Kconfig.Type) {
  * @returns
  */
 export function addDefaultRecursive(obj, name, value) {
-  if (obj.name && obj.name.match(/-id-/)) {
-    obj.name = obj.name.replace(/-id-/, '-id1-');
+  let objName = obj.name;
+  if (objName && objName.match(/-id[\w\d]+-/)) {
+    objName = objName.replace(/-id[\w\d]+-/, '1');
   }
 
-  if (obj.name === name) {
+  if (objName === name) {
+    obj.value = value;
     obj.default = value;
   }
+
+  // 这里遇到带数字的，需要自动新增key
+  // CL_REMOTE_CONTROL_1_FUN_OFF
+  // CL_REMOTE_CONTROL_2_FUN_OFF
 
   if (Array.isArray(obj.children) && obj.children.length > 0) {
     for (const child of obj.children) {
