@@ -15,20 +15,13 @@ const query = reactive<Query>(parseQueryParams(window.location.href));
 
 // 首先是把JSON里的默认值加进result里
 apiTest.getKconfig(query.CONFIG_CL_PRODUCT_ID).then((res) => {
-  let kconfig = res?.kconfig;
-  if (!kconfig) {
-    kconfig = kconfigJSON;
-  }
+  let kconfig = res?.kconfig ? res.kconfig : kconfigJSON;
+
   kconfig?.forEach(item => addResultRecursive(item));
   // 然后是把服务器的值填充进来，会把上面的默认值覆盖掉
   apiTest.getLastCompileJSON(query.device_model_id).then(res => {
-    let config = {};
-    if (res) {
-      if (res.formconfig) {
-        config = res.formconfig
-      }
-    }
-    config = result.value;
+    let config = res?.formconfig ? res.formconfig : result.value;
+
     if (Object.keys(config).length == 0) {
       state.value.kconfig = kconfig;
     }
@@ -64,7 +57,7 @@ const build = () => {
   apiTest.uploadCompile(query, postForm, postForm)
     .then((res) => {
       console.log(res);
-      if(res) {
+      if (res) {
         openNotificationWithIcon('success', '成功', '上传表单成功！');
         // window.location.href = query.re_url;
       }

@@ -2,13 +2,18 @@ import { hexToDecimal, decimalToHex } from '@/utils/util';
 import { ref, reactive, watch } from 'vue';
 
 
-export const useInput = () => {
+export const useInput = (data) => {
   const unitType = ref<'sixteen' | 'ten'>('sixteen');
   const formatValue = ref<string | number>('');
   const tooltipFlag = ref(false);
   const inputVal = ref('');
   const status = ref<'' | 'error' | 'warning'>(''); // 校验状态
   const range = reactive({ min: 0, max: 65535 });
+
+  watch(data, () => {
+    console.log("更新了int：", data);
+    inputVal.value = data.value;
+  }, { immediate: true, deep: true })
 
   const onChange = () => {
     // 校验输入值是否符合预期

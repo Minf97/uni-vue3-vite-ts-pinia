@@ -23,7 +23,7 @@
 // @ts-nocheck
 import { useDepend } from '@/hooks/useDepend';
 import { checkIfCanShow, removeEscapedQuotes } from '@/utils/util';
-import { ref, watch } from 'vue';
+import { ref, watch, watchEffect } from 'vue';
 // 数据
 const { data } = defineProps<{ data: Kconfig.StringObj }>();
 const { changeResult } = useStore('result')
@@ -33,10 +33,10 @@ const { flag } = useDepend(data);
 const inputVal = ref(removeEscapedQuotes(data.default));
 console.log(flag.value, data.name, data.value, "string");
 
-watch(data, () => {
-  console.log(data, "string更新");
+// watch(data, () => {
+//   console.log(data, "string更新");
 
-}, { deep: true })
+// }, { immediate: true, deep: true })
 
 watch(inputVal, () => {
   data.status = ''

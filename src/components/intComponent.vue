@@ -15,10 +15,10 @@
         </template>
 
         <a-input-group compact class="w-600">
-          <a-select v-model:value="unitType" :disabled="true">
+          <!-- <a-select v-model:value="unitType" :disabled="true">
             <a-select-option value="ten">十进制</a-select-option>
             <a-select-option value="sixteen">十六进制</a-select-option>
-          </a-select>
+          </a-select> -->
           <a-input v-model:value="inputVal" style="width: 50%;" @focus="onChange" @change="onChange" @blur="onBlur"
             :status="status" :disabled="data.disabled" />
         </a-input-group>
@@ -42,12 +42,12 @@
 import { useDepend } from '@/hooks/useDepend';
 import { useInput } from '@/hooks/useInput'
 import { checkIfCanShow } from '@/utils/util';
-import { watchEffect } from 'vue';
+import { watchEffect, watch } from 'vue';
 // 数据
 const { data } = defineProps<{ data: Kconfig.IntObj }>();
 const { changeResult, delResult } = useStore('result');
 const { flag } = useDepend(data);
-const { unitType, formatValue, tooltipFlag, inputVal, status, range, onChange } = useInput();
+const { unitType, formatValue, tooltipFlag, inputVal, status, range, onChange } = useInput(data);
 
 // 一些判断条件：
 // 判断range
@@ -56,8 +56,9 @@ if (data.range && data.range.length > 1) {
   range.max = data.range[1];
 }
 
-// console.log(data, "intData7666");
+watch(data, ()=> {
 
+}, {immediate: true,deep: true})
 
 inputVal.value = data.default;
 
