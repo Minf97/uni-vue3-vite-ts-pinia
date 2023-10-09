@@ -1,6 +1,5 @@
 {
   "pages": [
-
     {
       "name": "index",
       "path": "pages/index/index",
@@ -8,28 +7,9 @@
         "navigationBarTitleText": "Kconfig表单编译平台",
         "navigationBarBackgroundColor": "#1AA86C"
       }
-    },
-    {
-      "name": "profile",
-      "path": "pages/profile/profile",
-      "style": {
-        "navigationBarTitleText": "个人"
-      }
     }
   ],
   "subPackages": [
-    {
-      "root": "pages/test",
-      "pages": [
-        {
-          "name": "test",
-          "path": "test",
-          "style": {
-            "navigationBarTitleText": "测试"
-          }
-        }
-      ]
-    }
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",

@@ -1,15 +1,20 @@
-
 <script setup lang="ts">
 // @ts-nocheck
 import { kconfigJSON } from "./kconfig";
-import { checkIfCanShow, addDefaultRecursive, addResultRecursive, treeRecursive, parseQueryParams } from '@/utils/util';
-import { notification } from 'ant-design-vue';
-import apiTest from "@/api/apiTest"
+import {
+  checkIfCanShow,
+  addDefaultRecursive,
+  addResultRecursive,
+  treeRecursive,
+  parseQueryParams,
+} from "@/utils/util";
+import { notification } from "ant-design-vue";
+import apiTest from "@/api/apiTest";
 import { ref, reactive } from "vue";
 
-const { result } = useStore('result');
-const { state } = useStore('app');
-const CONFIG_CL_DEV_BRANCH = ref("release")
+const { result } = useStore("result");
+const { state } = useStore("app");
+const CONFIG_CL_DEV_BRANCH = ref("release");
 // query传参
 const query = reactive<Query>(parseQueryParams(window.location.href));
 
@@ -17,29 +22,33 @@ const query = reactive<Query>(parseQueryParams(window.location.href));
 apiTest.getKconfig(query.CONFIG_CL_PRODUCT_ID).then((res) => {
   let kconfig = res?.kconfig ? res.kconfig : kconfigJSON;
 
-  kconfig?.forEach(item => addResultRecursive(item));
+  kconfig?.forEach((item) => addResultRecursive(item));
   // 然后是把服务器的值填充进来，会把上面的默认值覆盖掉
-  apiTest.getLastCompileJSON(query.device_model_id).then(res => {
+  apiTest.getLastCompileJSON(query.device_model_id).then((res) => {
     let config = res?.formconfig ? res.formconfig : result.value;
 
     if (Object.keys(config).length == 0) {
       state.value.kconfig = kconfig;
-    }
-    else {
+    } else {
       for (const key in config) {
         const value = config[key];
-        state.value.kconfig = kconfig.map(item => {
-          return addDefaultRecursive(item, key, value)
-        })
+        state.value.kconfig = kconfig.map((item) => {
+          return addDefaultRecursive(item, key, value);
+        });
       }
       Object.assign(result.value, config);
     }
   });
-})
+});
 
-const openNotificationWithIcon = (type: 'success' | 'error' | 'info' | 'warning', message: string, description: string) => {
+const openNotificationWithIcon = (
+  type: "success" | "error" | "info" | "warning",
+  message: string,
+  description: string
+) => {
   notification[type]({
-    message, description
+    message,
+    description,
   });
 };
 
@@ -47,23 +56,41 @@ const build = () => {
   // 表单校验
   for (const item of state.value.kconfig) {
     if (!treeRecursive(item)) {
-      openNotificationWithIcon('warning', '警告!', '表单校验失败！仍有未填项');
+      openNotificationWithIcon("warning", "警告!", "表单校验失败！仍有未填项");
       return;
     }
   }
   // 加入 y: 1
-  const postForm = { ...result.value, ...{ CONFIG_CL_PRODUCT_ID: query.CONFIG_CL_PRODUCT_ID, CONFIG_CL_DEV_BRANCH: CONFIG_CL_DEV_BRANCH.value } }
+  const postForm = {
+    ...result.value,
+    ...{
+      CONFIG_CL_PRODUCT_ID: query.CONFIG_CL_PRODUCT_ID,
+      CONFIG_CL_DEV_BRANCH: CONFIG_CL_DEV_BRANCH.value,
+    },
+  };
+
+  uni.setClipboardData({
+    data: JSON.stringify(postForm),
+    success: (result) => {
+      uni.showToast({ title: "复制到粘贴板", icon: "success" });
+    },
+    fail: (error) => {},
+  });
+  return;
   // 上传表单
-  apiTest.uploadCompile(query, postForm, postForm)
+  apiTest
+    .uploadCompile(query, postForm, postForm)
     .then((res) => {
       console.log(res);
       if (res) {
-        openNotificationWithIcon('success', '成功', '上传表单成功！');
+        openNotificationWithIcon("success", "成功", "上传表单成功！");
         // window.location.href = query.re_url;
       }
     })
-    .catch(() => openNotificationWithIcon('error', '错误!', '上传表单失败! 请联系开发人员'))
-}
+    .catch(() =>
+      openNotificationWithIcon("error", "错误!", "上传表单失败! 请联系开发人员")
+    );
+};
 </script>
 
 <template>
@@ -73,11 +100,19 @@ const build = () => {
     <div class="flex w-full pt-35">
       <a-tooltip placement="bottomRight">
         <template #title>{{ toolTip }}</template>
-        <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">开发分支:</div>
+        <div
+          class="flex flex-1 items-center justify-end text-right p-10 tracking-wide"
+        >
+          开发分支:
+        </div>
       </a-tooltip>
 
       <div class="flex flex-1 items-center">
-        <a-select class="w-100% max-w-800" ref="select" v-model:value="CONFIG_CL_DEV_BRANCH">
+        <a-select
+          class="w-100% max-w-800"
+          ref="select"
+          v-model:value="CONFIG_CL_DEV_BRANCH"
+        >
           <a-select-option value="release">release</a-select-option>
           <a-select-option value="develop">develop</a-select-option>
         </a-select>
@@ -85,21 +120,33 @@ const build = () => {
     </div>
     <!-- 主版本 -->
     <div class="flex w-full pt-35">
-      <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">主版本</div>
+      <div
+        class="flex flex-1 items-center justify-end text-right p-10 tracking-wide"
+      >
+        主版本
+      </div>
       <div class="flex-1">
         <a-input class="w-400" v-model:value="query.major_version" />
       </div>
     </div>
     <!-- 功能版本 -->
     <div class="flex w-full pt-35">
-      <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">功能版本</div>
+      <div
+        class="flex flex-1 items-center justify-end text-right p-10 tracking-wide"
+      >
+        功能版本
+      </div>
       <div class="flex-1">
         <a-input class="w-400" v-model:value="query.minor_version" />
       </div>
     </div>
     <!-- bug修改版本 -->
     <div class="flex w-full pt-35">
-      <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">bug修改版本</div>
+      <div
+        class="flex flex-1 items-center justify-end text-right p-10 tracking-wide"
+      >
+        bug修改版本
+      </div>
       <div class="flex-1">
         <a-input class="w-400" v-model:value="query.revision" />
       </div>
