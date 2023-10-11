@@ -11,6 +11,7 @@ import {
 import { notification } from "ant-design-vue";
 import apiTest from "@/api/apiTest";
 import { ref, reactive } from "vue";
+import { deepClone } from "@/utils/clone";
 
 const { result } = useStore("result");
 const { state } = useStore("app");
@@ -18,10 +19,10 @@ const CONFIG_CL_DEV_BRANCH = ref("release");
 // query传参
 const query = reactive<Query>(parseQueryParams(window.location.href));
 
-// 首先是把JSON里的默认值加进result里
+// 请求JSON
 apiTest.getKconfig(query.CONFIG_CL_PRODUCT_ID).then((res) => {
   let kconfig = res?.kconfig ? res.kconfig : kconfigJSON;
-
+  // 首先是把JSON里的默认值加进result里
   kconfig?.forEach((item) => addResultRecursive(item));
   // 然后是把服务器的值填充进来，会把上面的默认值覆盖掉
   apiTest.getLastCompileJSON(query.device_model_id).then((res) => {
@@ -60,23 +61,26 @@ const build = () => {
       return;
     }
   }
+
+  const res = deepClone(result.value);
+  for(let key in res) {
+    const newKey = "CONFIG_" + key;
+    res[newKey] = res[key];
+    delete res[key];
+  }
   // 加入 y: 1
   const postForm = {
-    ...result.value,
+    ...res,
     ...{
       CONFIG_CL_PRODUCT_ID: query.CONFIG_CL_PRODUCT_ID,
       CONFIG_CL_DEV_BRANCH: CONFIG_CL_DEV_BRANCH.value,
     },
   };
-
-  uni.setClipboardData({
-    data: JSON.stringify(postForm),
-    success: (result) => {
-      uni.showToast({ title: "复制到粘贴板", icon: "success" });
-    },
-    fail: (error) => {},
-  });
+  uni.setClipboardData({data: postForm, success: () => {
+    uni.showToast({title: "复制成功"})
+  }})
   return;
+
   // 上传表单
   apiTest
     .uploadCompile(query, postForm, postForm)
@@ -84,7 +88,9 @@ const build = () => {
       console.log(res);
       if (res) {
         openNotificationWithIcon("success", "成功", "上传表单成功！");
-        // window.location.href = query.re_url;
+        setTimeout(() => {
+          window.location.href = query.re_url;
+        }, 2000);
       }
     })
     .catch(() =>

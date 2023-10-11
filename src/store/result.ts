@@ -1,12 +1,12 @@
 import { ref } from 'vue';
-import { handleDepends_on, handleDepends_on1 } from '@/utils/util';
+import { handleDepends_on1 } from '@/utils/util';
 import { useStore } from '@/helper/pinia-auto-refs';
 
 export default defineStore(
   'result',
   () => {
     const result = ref({});
-    const { findTreeNode, state } = useStore('app')
+    const { state } = useStore('app')
     // 赋值
     const changeResult = (key: string, val) => {
       key = handleKey(key);
@@ -53,6 +53,7 @@ export default defineStore(
                   nameList.add(realName);
                   const nodeKey = handleKey(node.name);
                   delete result.value[nodeKey];
+                  delChildKey(node);
                   console.log(node, nodeKey, "删除子依赖项的key");
                 }
               } else {
@@ -87,7 +88,9 @@ export default defineStore(
 
     const findKey = (key: string): boolean => {
       key = handleKey(key);
-      return result.value[key] ? true : false
+      console.log(key, "handleKey后的key");
+
+      return result.value[key] && result.value[key] != "n" ? true : false
     }
 
     return {
@@ -97,11 +100,6 @@ export default defineStore(
       delResult,
       findKey
     };
-  },
-  {
-    persist: {
-      enabled: true
-    }
   }
 );
 

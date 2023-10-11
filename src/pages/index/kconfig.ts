@@ -1,202 +1,5 @@
-import { isObject } from "@/utils/is";
-import { reactive } from "vue";
-
-
 
 export const kconfigJSON = [
-  {
-    "children": [],
-    "default": "\"\"",
-    "depends_on": null,
-    "help": "Product name help",
-    "id": "CL_PRODUCT_NAME",
-    "name": "CL_PRODUCT_NAME",
-    "range": null,
-    "title": "Product name",
-    "type": "string"
-  },
-  {
-    "children": [
-      {
-        "children": [
-          {
-            "children": [],
-            "depends_on": "<choice CL_CHIP_TYPE>",
-            "help": null,
-            "id": "CL_CHIP_TYPE_NULL",
-            "name": "CL_CHIP_TYPE_NULL",
-            "range": null,
-            "title": "Not set",
-            "type": "bool"
-          },
-          {
-            "children": [],
-            "depends_on": "<choice CL_CHIP_TYPE>",
-            "help": null,
-            "id": "CL_CHIP_TYPE_ESP32",
-            "name": "CL_CHIP_TYPE_ESP32",
-            "range": null,
-            "title": "ESP32",
-            "type": "bool"
-          },
-          {
-            "children": [],
-            "depends_on": "<choice CL_CHIP_TYPE>",
-            "help": null,
-            "id": "CL_CHIP_TYPE_ESP32C3",
-            "name": "CL_CHIP_TYPE_ESP32C3",
-            "range": null,
-            "title": "ESP32C3",
-            "type": "bool"
-          }
-        ],
-        "depends_on": null,
-        "help": null,
-        "id": "chip-module-chip",
-        "name": "CL_CHIP_TYPE",
-        "title": "Chip",
-        "type": "choice"
-      },
-      {
-        "children": [],
-        "default": "0",
-        "depends_on": null,
-        "help": null,
-        "id": "CL_CHIP_TYPE",
-        "name": "CL_CHIP_TYPE",
-        "range": null,
-        "title": null,
-        "type": "int"
-      },
-      {
-        "children": [],
-        "default": "y",
-        "depends_on": "CL_CHIP_TYPE_ESP32",
-        "help": null,
-        "id": "CL_ESP32_MODULE_ENABLE_LEXIN",
-        "name": "CL_ESP32_MODULE_ENABLE_LEXIN",
-        "range": null,
-        "title": "Support Le Xin module",
-        "type": "bool"
-      },
-      {
-        "children": [],
-        "depends_on": "CL_CHIP_TYPE_ESP32",
-        "help": null,
-        "id": "CL_ESP32_MODULE_ENABLE_LEXIN_D0WD",
-        "name": "CL_ESP32_MODULE_ENABLE_LEXIN_D0WD",
-        "range": null,
-        "title": "Support Lexin D0WD module",
-        "type": "bool"
-      },
-      {
-        "children": [
-          {
-            "children": [],
-            "default": "y",
-            "depends_on": "<choice CL_ESP32_MODULE>",
-            "help": null,
-            "id": "CL_ESP32_MODULE_NULL",
-            "name": "CL_ESP32_MODULE_NULL",
-            "range": null,
-            "title": "Do not use modules",
-            "type": "bool"
-          },
-          {
-            "children": [],
-            "depends_on": "<choice CL_ESP32_MODULE>",
-            "help": null,
-            "id": "CL_ESP32_MODULE_ESP_HOME",
-            "name": "CL_ESP32_MODULE_ESP_HOME",
-            "range": null,
-            "title": "ESP-HOME",
-            "type": "bool"
-          },
-          {
-            "children": [],
-            "depends_on": "CL_ESP32_MODULE_ENABLE_LEXIN && CL_ESP32_MODULE_ENABLE_LEXIN_D0WD && <choice CL_ESP32_MODULE>",
-            "help": null,
-            "id": "CL_ESP32_MODULE_ESP32_D0WD",
-            "name": "CL_ESP32_MODULE_ESP32_D0WD",
-            "range": null,
-            "title": "ESP32-D0WD",
-            "type": "bool"
-          }
-        ],
-        "depends_on": "CL_CHIP_TYPE_ESP32",
-        "help": null,
-        "id": "chip-module-esp32-module",
-        "name": "CL_ESP32_MODULE",
-        "title": "ESP32 module",
-        "type": "choice"
-      },
-      {
-        "children": [
-          {
-            "children": [],
-            "depends_on": "<choice CL_ESP32C3_MODULE>",
-            "help": null,
-            "id": "CL_ESP32C3_MODULE_NULL",
-            "name": "CL_ESP32C3_MODULE_NULL",
-            "range": null,
-            "title": "Do not use modules",
-            "type": "bool"
-          }
-        ],
-        "depends_on": "CL_CHIP_TYPE_ESP32C3",
-        "help": null,
-        "id": "chip-module-esp32c3-module",
-        "name": "CL_ESP32C3_MODULE",
-        "title": "ESP32C3 module",
-        "type": "choice"
-      }
-    ],
-    "depends_on": null,
-    "id": "chip-module",
-    "title": "Chip module",
-    "type": "menu"
-  },
-  {
-    "children": [
-      {
-        "children": [],
-        "default": "\"0.0.1\"",
-        "depends_on": null,
-        "help": null,
-        "id": "CL_HARDWARE_VERSION",
-        "name": "CL_HARDWARE_VERSION",
-        "range": null,
-        "title": "Hardware version",
-        "type": "string"
-      }
-    ],
-    "depends_on": null,
-    "id": "version-configuration",
-    "title": "Version configuration",
-    "type": "menu"
-  },
-  {
-    "children": [
-      {
-        "children": [],
-        "default": "20",
-        "depends_on": null,
-        "help": null,
-        "id": "CL_LOOP_PERIOD",
-        "name": "CL_LOOP_PERIOD",
-        "range": [
-          10,
-          20
-        ],
-        "title": "System operating cycle",
-        "type": "int"
-      }
-    ],
-    "depends_on": null,
-    "id": "system-configuration",
-    "title": "System configuration",
-    "type": "menu"
-  },
   {
     "children": [
       {
@@ -216,45 +19,6 @@ export const kconfigJSON = [
                 "placement": "left"
               },
               {
-                "children": [],
-                "default": null,
-                "depends_on": "CL_BUTTON_CONTROL_ENABLED",
-                "help": "\"Click\"",
-                "id": "_CL_BUTTON_CONTROL_-id-_TYPE_CLICK",
-                "name": "_CL_BUTTON_CONTROL_-id-_TYPE_CLICK",
-                "range": null,
-                "title": "Click",
-                "type": "string",
-                "disabled": true,
-                "placement": "middle"
-              },
-              {
-                "children": [],
-                "default": null,
-                "depends_on": "CL_BUTTON_CONTROL_ENABLED",
-                "help":  "\"Dublue\"",
-                "id": "_CL_BUTTON_CONTROL_-id-_TYPE_DOUBLE",
-                "name": "_CL_BUTTON_CONTROL_-id-_TYPE_DOUBLE",
-                "range": null,
-                "title": "Dublue",
-                "type": "string",
-                "disabled": true,
-                "placement": "middle"
-              },
-              {
-                "children": [],
-                "default": null,
-                "depends_on": "CL_BUTTON_CONTROL_ENABLED",
-                "help": "Long",
-                "id": "_CL_BUTTON_CONTROL_-id-_TYPE_LONG",
-                "name": "_CL_BUTTON_CONTROL_-id-_TYPE_LONG",
-                "range": null,
-                "title": "Long",
-                "type": "string",
-                "disabled": true,
-                "placement": "middle"
-              },
-              {
                 "children": [
                   {
                     "children": [],
@@ -264,7 +28,8 @@ export const kconfigJSON = [
                     "name": "CL_BUTTON_CONTROL_-id-_CLICK_FUN_ON",
                     "range": null,
                     "title": "on",
-                    "type": "bool"
+                    "type": "bool",
+                    "default": "y"
                   },
                   {
                     "children": [],
@@ -295,7 +60,8 @@ export const kconfigJSON = [
                     "name": "CL_BUTTON_CONTROL_-id-_DOUBLE_FUN_ON",
                     "range": null,
                     "title": "on",
-                    "type": "bool"
+                    "type": "bool",
+                    "default": "y"
                   },
                   {
                     "children": [],
@@ -326,7 +92,8 @@ export const kconfigJSON = [
                     "name": "CL_BUTTON_CONTROL_-id-_LONG_FUN_ON",
                     "range": null,
                     "title": "on",
-                    "type": "bool"
+                    "type": "bool",
+                    "default": "y"
                   },
                   {
                     "children": [],
@@ -382,7 +149,8 @@ export const kconfigJSON = [
                 "name": "CL_REMOTE_CONTROL_TYPE_IR",
                 "range": null,
                 "title": "IR remote",
-                "type": "bool"
+                "type": "bool",
+                "default": "y"
               },
               {
                 "children": [],
@@ -404,6 +172,7 @@ export const kconfigJSON = [
           }
         ],
         "depends_on": null,
+        "default": "y",
         "help": null,
         "id": "CL_REMOTE_CONTROL_ENABLED",
         "name": "CL_REMOTE_CONTROL_ENABLED",
@@ -442,29 +211,62 @@ export const kconfigJSON = [
                 "children": [],
                 "depends_on": "<choice CL_REMOTE_CONTROL_-id-_FUN>",
                 "help": null,
-                "id": "CL_REMOTE_CONTROL_-id-_FUN_ON",
-                "name": "CL_REMOTE_CONTROL_-id-_FUN_ON",
+                "id": "CL_REMOTE_CONTROL_-id-_FUN_btn_remote_fun_set_on",
+                "name": "CL_REMOTE_CONTROL_-id-_FUN_btn_remote_fun_set_on",
                 "range": null,
                 "title": "on",
+                "type": "bool",
+                "default": "y"
+              },
+              {
+                "children": [],
+                "depends_on": "<choice CL_REMOTE_CONTROL_-id-_FUN>",
+                "help": null,
+                "id": "CL_REMOTE_CONTROL_-id-_FUN_btn_remote_fun_set_off",
+                "name": "CL_REMOTE_CONTROL_-id-_FUN_btn_remote_fun_set_off",
+                "range": null,
+                "title": "off",
                 "type": "bool"
               },
               {
                 "children": [],
                 "depends_on": "<choice CL_REMOTE_CONTROL_-id-_FUN>",
                 "help": null,
-                "id": "CL_REMOTE_CONTROL_-id-_FUN_OFF",
-                "name": "CL_REMOTE_CONTROL_-id-_FUN_OFF",
+                "id": "CL_REMOTE_CONTROL_-id-_FUN_btn_remote_fun_set_color",
+                "name": "CL_REMOTE_CONTROL_-id-_FUN_btn_remote_fun_set_color",
                 "range": null,
-                "title": "offffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff123",
+                "title": "color",
+                "type": "bool"
+              },
+              {
+                "children": [],
+                "depends_on": "<choice CL_REMOTE_CONTROL_-id-_FUN>",
+                "help": null,
+                "id": "CL_REMOTE_CONTROL_-id-_FUN_custom",
+                "name": "CL_REMOTE_CONTROL_-id-_FUN_custom",
+                "range": null,
+                "title": "custom",
                 "type": "bool"
               }
             ],
             "depends_on": "CL_REMOTE_CONTROL_ENABLED",
             "help": null,
-            "id": "remote-control-remote-fun-type-menu2--fun-placement-right-",
+            "id": "remote-control-remote-fun-type-menu2--fun-placement-middle-",
             "name": "CL_REMOTE_CONTROL_-id-_FUN",
             "title": "Fun",
             "type": "choice",
+            "placement": "middle"
+          },
+          {
+            "children": [],
+            "default": "\"\"",
+            "depends_on": "(CL_REMOTE_CONTROL_-id-_FUN_btn_remote_fun_set_color || CL_REMOTE_CONTROL_-id-_FUN_custom) && CL_REMOTE_CONTROL_ENABLED",
+            "help": null,
+            "id": "CL_REMOTE_CONTROL_-id-_FUN_arg",
+            "name": "CL_REMOTE_CONTROL_-id-_FUN_arg",
+            "range": null,
+            "title": "",
+            "type": "string",
             "placement": "right"
           }
         ],

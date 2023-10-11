@@ -28,7 +28,7 @@
     </div>
   </div>
   <!-- 特殊项 - children - 用于递归 -->
-  <div v-for="item in data.children">
+  <div v-for="item in data.children" v-if="flag">
     <stringComponent v-if="checkIfCanShow(item, 'string')" :data="item" />
     <intComponent v-if="checkIfCanShow(item, 'int')" :data="item" />
     <boolComponent v-if="checkIfCanShow(item, 'bool')" :data="item" />

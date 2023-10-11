@@ -1,5 +1,4 @@
 import { reactive } from "vue";
-import {handleDepends_on} from "@/utils/util"
 
 export default defineStore({
   id: 'app',
@@ -43,18 +42,6 @@ export default defineStore({
           }
         }
         return null
-      }
-    },
-
-    findDependChild(name) {
-
-
-
-      for(let i = 0; i < this.state.kconfig.length; i ++) {
-        const node = this.state.kconfig[i];
-        if(handleDepends_on(node[depends_on]).includes(name)) {
-
-        }
       }
     },
   }

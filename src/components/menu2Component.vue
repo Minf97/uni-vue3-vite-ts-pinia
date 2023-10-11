@@ -73,6 +73,8 @@ watchEffect(() => {
     }
     return accumulator
   }, [])
+  console.log(list.value, 9999);
+
 })
 
 const colList = computed(() => {
@@ -83,8 +85,6 @@ const colList = computed(() => {
   return [...set]
 })
 console.log(colList.value);
-
-
 
 function recursiveAddResult(obj) {
   let res = [];
@@ -166,12 +166,12 @@ const addChildren = () => {
   const concatList = data.children.map(item => recursive(item, lastID));
   data.children = data.children.concat(concatList.filter(item => item));
 
-
   function recursive(obj, lastID) {
     const newItem = deepClone(obj);
     let res = "";
     if (newItem.name.includes(`-id${lastID}-`)) {
-      newItem.name = newItem.name.replace(/-id.+-/, `-id${lastID + 1}-`);
+      newItem.name = newItem.name.replace(/-id(\d+)?-/, `-id${lastID + 1}-`);
+      newItem.depends_on = newItem.depends_on.replace(/-id(\d+)?-/, `-id${lastID + 1}-`);
       // 无法有默认值
       newItem.default = null;
       newItem.value = null;

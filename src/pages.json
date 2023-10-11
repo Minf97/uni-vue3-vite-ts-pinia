@@ -5,7 +5,8 @@
       "path": "pages/index/index",
       "style": {
         "navigationBarTitleText": "Kconfig表单编译平台",
-        "navigationBarBackgroundColor": "#1AA86C"
+        "navigationBarBackgroundColor": "#f8f8f8",
+        "navigationStyle": "custom"
       }
     }
   ],

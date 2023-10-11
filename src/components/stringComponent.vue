@@ -10,7 +10,7 @@
     </div>
   </div>
   <!-- 特殊项 - children - 用于递归 -->
-  <div v-for="item in data.children">
+  <div v-for="item in data.children" v-if="flag">
     <stringComponent v-if="checkIfCanShow(item, 'string')" :data="item" />
     <intComponent v-if="checkIfCanShow(item, 'int')" :data="item" />
     <boolComponent v-if="checkIfCanShow(item, 'bool')" :data="item" />
@@ -31,12 +31,6 @@ const { flag } = useDepend(data);
 
 // 双向绑定
 const inputVal = ref(removeEscapedQuotes(data.default));
-console.log(flag.value, data.name, data.value, "string");
-
-// watch(data, () => {
-//   console.log(data, "string更新");
-
-// }, { immediate: true, deep: true })
 
 watch(inputVal, () => {
   data.status = ''
