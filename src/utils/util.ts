@@ -1,4 +1,4 @@
-import { handleDepends_on } from "@/hooks/useDepend";
+import { handleDepends_on, useDepend } from "@/hooks/useDepend";
 
 
 
