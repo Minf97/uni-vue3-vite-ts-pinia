@@ -76,7 +76,7 @@ const build = () => {
       CONFIG_CL_DEV_BRANCH: CONFIG_CL_DEV_BRANCH.value,
     },
   };
-  uni.setClipboardData({data: postForm, success: () => {
+  uni.setClipboardData({data: JSON.stringify(postForm), success: () => {
     uni.showToast({title: "复制成功"})
   }})
   return;
