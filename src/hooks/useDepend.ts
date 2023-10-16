@@ -2,27 +2,68 @@ import { useFlag } from '@/hooks/useFlag'
 import { ref, watch } from 'vue';
 
 export const useDepend = (data) => {
-  const { result, delResult } = useStore('result');
+  const { result, changeResult, delResult } = useStore('result');
   const { flag, setFlag } = useFlag(true);
 
   watch(result, () => {
-    // 首先置位true
-    setFlag(true)
     // 如果出现不满足，则置位false
     setFlag(handleDepends_on(data.depends_on))
 
-    // 针对choice
-    if (data.type == 'choice') {
-      data.children.forEach((item, index) => {
-        if (!handleDepends_on(item.depends_on)) {
-          delResult(data.children[index].name);
-          data.children[index].hide = true;
-          data.children[index].default = false;
-          return;
+    // 然后深度遍历，如果子(注意只处理子，不处理自身)有默认值，且依赖都打开，则把默认值加到result树上
+    function dfsAddDefault(obj) {
+      // choice要单独处理：
+      //  如果它的依赖项打开了，就去遍历子级，如果有默认值且依赖项打开，放到树里
+      // 普通组件的处理：
+      //  如果它的依赖项打开了，就深度遍历其子节点，如果子节点依赖打开且有default，就加入到树里
+      if (obj.type === 'choice') {
+        if (handleDepends_on(obj.depends_on) && !obj.secondChange) {
+          for (let child of obj.children) {
+            if (child.default == 'y' && handleDepends_on(child.depends_on)) {
+              changeResult(child.name, child.default, obj)
+            }
+          }
         }
-        data.children[index].hide = false;
-      })
+      }
+      else {
+        if (handleDepends_on(obj.depends_on) && !obj.secondChange) {
+          console.log(obj.name, "子111");
+          // dfs
+          if (obj.children.length > 0) {
+            for (let child of obj.children) {
+              if (
+                handleDepends_on(child.depends_on) &&
+                child.default !== undefined &&
+                child.default !== null &&
+                child.default !== "n"
+              ) {
+                console.log(child.name, "子");
+                child.clearFocus = false;
+
+                changeResult(child.name, child.default, child);
+                dfsAddDefault(child)
+              }
+            }
+          }
+        }
+      }
     }
+
+
+    dfsAddDefault(data);
+    // 针对choice
+    // if (data.type == 'choice') {
+    //   data.children.forEach((item, index) => {
+    //     if (!handleDepends_on(item.depends_on)) {
+    //       delResult(data.children[index].name);
+    //       data.children[index].hide = true;
+    //       data.children[index].default = "n";
+    //       return;
+    //     }
+    //     console.log(data);
+
+    //     data.children[index].hide = false;
+    //   })
+    // }
   }, { immediate: true, deep: true })
 
   return {
@@ -62,14 +103,13 @@ export function handleDepends_on(str: string | null): boolean {
   }
 
   // 先要把 -id123- 处理一下
-  if(str && str.match(/-id(\d+)-/)) {
+  if (str && str.match(/-id(\d+)-/)) {
     str = str.replace(/-id(\d+)-/g, "$1");
   }
   // 还要把 <choice xxx> 处理一下
   // if(regex.test(str)) {
   //   str = str?.replace(/<choice(\s\w+)>/, "$1")
   // }
-
 
   // null 最简单的情况
   if (!str) return true;
@@ -108,7 +148,7 @@ export function handleDepends_on(str: string | null): boolean {
     // 仅存在 ||
     if (str.includes('||')) return handleOr(str)
     // 是 name1 或 <choice name1>
-    if(!regex.test(str)) return findKey(str)
+    if (!regex.test(str)) return findKey(str)
     // <choice name1>
     return true;
   }

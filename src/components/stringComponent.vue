@@ -7,6 +7,7 @@
     <div class="flex-1">
       <a-input class="w-400" @change="onChange" v-model:value="inputVal" :placeholder="data.help || data.title"
         allow-clear :status="data.status" :showCount="!data.disabled" :disabled="data.disabled" />
+        <helper v-if="data.help" :helper="data.help" style="margin-left: 10px;" />
     </div>
   </div>
   <!-- 特殊项 - children - 用于递归 -->
@@ -37,7 +38,7 @@ watch(inputVal, () => {
 })
 // 输入框改变事件
 const onChange = () => {
-  changeResult(data.name, `\"${inputVal.value}\"`)
+  changeResult(data.name, `\"${inputVal.value}\"`, data)
   data.value = inputVal.value;
 }
 </script>

@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 import { handleDepends_on1 } from '@/utils/util';
+import { handleDepends_on } from "@/hooks/useDepend"
 import { useStore } from '@/helper/pinia-auto-refs';
 
 export default defineStore(
@@ -8,9 +9,17 @@ export default defineStore(
     const result = ref({});
     const { state } = useStore('app')
     // 赋值
-    const changeResult = (key: string, val) => {
+    const changeResult = (key: string, val, obj: Kconfig.children) => {
       key = handleKey(key);
       result.value[key] = val;
+
+      obj.value = val;
+      obj.secondChange = true;
+      obj.clearFocus = false;
+      if(obj.type === 'choice') {
+        obj.value = key;
+      }
+
       console.log("result赋值了:", key, val,);
     }
     // 删除键值
@@ -20,12 +29,11 @@ export default defineStore(
         delete result.value[key];
       }
 
-      // const nameList = [];
       const nameList = new Set();
 
       if (obj) {
         obj.value = null;
-        obj.default = null;
+        // obj.default = null;
         // 子依赖项要删除
         function findDependChild(arr, name) {
           let realName = name;
@@ -43,8 +51,8 @@ export default defineStore(
               // intersection有可能是 [undefined]
               if (intersection.filter(item => item).length > 0) {
                 node.value = null;
-                node.default = null;
                 node.clearFocus = true;
+                node.secondChange = false;
                 if (node.name) {
                   let realName = node.name;
                   if (node.name.match(/-id[\w\d]+-/)) {
@@ -70,7 +78,6 @@ export default defineStore(
           if (obj.children.length > 0) {
             obj.children.map(item => {
               item.value = null;
-              item.default = null;
               if (item.name) {
                 const objKey = handleKey(item.name);
                 delete result.value[objKey];

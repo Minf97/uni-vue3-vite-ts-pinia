@@ -172,8 +172,8 @@ export const kconfigJSON = [
           }
         ],
         "depends_on": null,
-        "default": "y",
-        "help": null,
+        "default": "n",
+        "help": "这就是介绍",
         "id": "CL_REMOTE_CONTROL_ENABLED",
         "name": "CL_REMOTE_CONTROL_ENABLED",
         "range": null,

@@ -11,6 +11,7 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     BoolComponent: typeof import('./components/boolComponent.vue')['default']
     ChoiceComponent: typeof import('./components/choiceComponent.vue')['default']
+    Helper: typeof import('./components/helper.vue')['default']
     IntComponent: typeof import('./components/intComponent.vue')['default']
     Menu2Component: typeof import('./components/menu2Component.vue')['default']
     MenuComponent: typeof import('./components/menuComponent.vue')['default']

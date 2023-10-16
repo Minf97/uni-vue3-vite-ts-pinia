@@ -21,6 +21,7 @@
           </a-select> -->
           <a-input v-model:value="inputVal" style="width: 50%;" @focus="onChange" @change="onChange" @blur="onBlur"
             :status="status" :disabled="data.disabled" />
+            <helper v-if="data.help" :helper="data.help" style="margin-left: 10px;" />
         </a-input-group>
       </a-tooltip>
 
@@ -72,7 +73,7 @@ const onBlur = () => {
     delResult(data.name, data)
     return;
   }
-  changeResult(data.name, inputVal.value);
+  changeResult(data.name, inputVal.value, data);
   data.value = inputVal.value;
 }
 </script>

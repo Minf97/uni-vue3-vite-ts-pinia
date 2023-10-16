@@ -169,7 +169,10 @@ const addChildren = () => {
   function recursive(obj, lastID) {
     const newItem = deepClone(obj);
     let res = "";
+    console.log(newItem.name, 55555, lastID);
+
     if (newItem.name.includes(`-id${lastID}-`)) {
+
       newItem.name = newItem.name.replace(/-id(\d+)?-/, `-id${lastID + 1}-`);
       newItem.depends_on = newItem.depends_on.replace(/-id(\d+)?-/, `-id${lastID + 1}-`);
       // 无法有默认值

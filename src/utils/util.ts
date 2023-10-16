@@ -87,35 +87,52 @@ export function addDefaultRecursive(obj, name, value) {
  */
 export function addResultRecursive(obj) {
   const { changeResult } = useStore('result');
-
-  if (obj.name && obj.name.match(/-id-/)) {
-    obj.name = obj.name.replace(/-id-/, '-id1-');
-    obj.depends_on = obj.depends_on.replace(/-id-/g, '-id1-');
-  }
+  dfc(obj)
   // 如果是choice，需要单独处理
-  if(obj.type == 'choice') {
-    if(handleDepends_on(obj.depends_on)) {
+  if (obj.type == 'choice') {
+    if (handleDepends_on(obj.depends_on)) {
       if (Array.isArray(obj.children) && obj.children.length > 0) {
         for (const child of obj.children) {
           addResultRecursive(child);
         }
       }
     }
+    // 把默认值去掉，避免误会
+    // else {
+    //   for(const child of obj.children) {
+    //     child.default = null;
+    //   }
+    // }
   }
   else {
     if (obj.default) {
       // 要检查下他的依赖项开了没有
       console.log(obj.name, handleDepends_on(obj.depends_on), "依赖？");
 
-      if(handleDepends_on(obj.depends_on)) {
-        changeResult(obj.name, obj.default);
+      if (handleDepends_on(obj.depends_on)) {
+        changeResult(obj.name, obj.default, obj);
         obj.value = obj.default;
+      }
+      else {
+        obj.value = null;
       }
     }
 
     if (Array.isArray(obj.children) && obj.children.length > 0) {
       for (const child of obj.children) {
         addResultRecursive(child);
+      }
+    }
+  }
+
+  function dfc(obj) {
+    if (obj.name && obj.name.match(/-id-/)) {
+      obj.name = obj.name.replace(/-id-/, '-id1-');
+      obj.depends_on = obj.depends_on.replace(/-id-/g, '-id1-');
+    }
+    if (Array.isArray(obj.children) && obj.children.length > 0) {
+      for (const child of obj.children) {
+        dfc(child);
       }
     }
   }

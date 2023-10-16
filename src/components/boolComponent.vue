@@ -5,7 +5,7 @@
     <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">{{ data.title }} {{ data.title ? ':' : '' }}</div>
     <div class="flex flex-1 items-center">
       <a-switch @change="onChange" v-model:checked="inputVal" />
-      <!-- <InfoCircleOutlined /> -->
+      <helper v-if="data.help" :helper="data.help" style="margin-left: 10px;"  />
     </div>
 
   </div>
@@ -36,7 +36,7 @@ const inputVal = ref(data.default == "y" ? true : false);
 
 // 输入框改变事件
 const onChange = (e) => {
-  e ? changeResult(data.name, 'y') : delResult(data.name, data);
+  e ? changeResult(data.name, 'y', data) : delResult(data.name, data);
   data.value = e;
 }
 
