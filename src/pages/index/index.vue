@@ -90,10 +90,10 @@ const build = () => {
       CONFIG_CL_DEV_BRANCH: CONFIG_CL_DEV_BRANCH.value,
     },
   };
-  // uni.setClipboardData({data: JSON.stringify(postForm), success: () => {
-  //   uni.showToast({title: "复制成功"})
-  // }})
-  // return;
+  uni.setClipboardData({data: JSON.stringify(postForm), success: () => {
+    uni.showToast({title: "复制成功"})
+  }})
+  return;
 
   // 上传表单
   apiTest
