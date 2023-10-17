@@ -7,7 +7,7 @@
     <div class="fs-40 fw-700 tracking-wide flex items-center justify-center pt-70" v-if="isSpecial && flag">
       <div class="w-70% border-b border-0 border-solid border-#ccc leading-loose c-#999">{{ data.title }}</div>
     </div>
-    <div class="w-80% m-auto">
+    <div class="w-70% m-auto">
       <a-row v-for="a in list">
         <a-col :span="24 / colList.length" v-for="n in colList">
           <div v-for="item in a">
@@ -173,8 +173,8 @@ const addChildren = () => {
 
     if (newItem.name.includes(`-id${lastID}-`)) {
 
-      newItem.name = newItem.name.replace(/-id(\d+)?-/, `-id${lastID + 1}-`);
-      newItem.depends_on = newItem.depends_on.replace(/-id(\d+)?-/, `-id${lastID + 1}-`);
+      newItem.name = newItem.name.replace(/-id(\d+)?-/g, `-id${lastID + 1}-`);
+      newItem.depends_on = newItem.depends_on ? newItem.depends_on?.replace(/-id(\d+)?-/g, `-id${lastID + 1}-`) : newItem.depends_on;
       // 无法有默认值
       newItem.default = null;
       newItem.value = null;

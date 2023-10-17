@@ -3,7 +3,7 @@
 <template>
   <div class="flex w-full pt-35" v-if="flag">
     <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">{{ data.title }} {{ data.title ? ':' : '' }}</div>
-    <div class="flex flex-1">
+    <div class="flex-1">
       <!-- <a-input-number class="w-400" @change="onChange" id="inputNumber" :placeholder="placeholder"
         v-model:value="inputVal" :min="range.min" :max="range.max" :status="status" :disabled="data.disabled" /> -->
 
@@ -14,7 +14,7 @@
           </span>
         </template>
 
-        <a-input-group compact class="w-600">
+        <a-input-group compact class="">
           <!-- <a-select v-model:value="unitType" :disabled="true">
             <a-select-option value="ten">十进制</a-select-option>
             <a-select-option value="sixteen">十六进制</a-select-option>

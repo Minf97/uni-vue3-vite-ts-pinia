@@ -17,7 +17,14 @@ export default defineStore(
       obj.secondChange = true;
       obj.clearFocus = false;
       if(obj.type === 'choice') {
-        obj.value = key;
+        for(let child of obj.children) {
+          console.log(child.name, key, "help");
+          let name = child.name.replace(/-id(\d+)-/, "$1");
+          if(name == key) {
+            obj.value = child.title;
+          }
+        }
+
       }
 
       console.log("result赋值了:", key, val,);

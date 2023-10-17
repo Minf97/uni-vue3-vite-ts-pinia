@@ -128,7 +128,8 @@ export function addResultRecursive(obj) {
   function dfc(obj) {
     if (obj.name && obj.name.match(/-id-/)) {
       obj.name = obj.name.replace(/-id-/, '-id1-');
-      obj.depends_on = obj.depends_on.replace(/-id-/g, '-id1-');
+
+      obj.depends_on = obj.depends_on ? obj.depends_on?.replace(/-id-/g, '-id1-') : obj.depends_on;
     }
     if (Array.isArray(obj.children) && obj.children.length > 0) {
       for (const child of obj.children) {

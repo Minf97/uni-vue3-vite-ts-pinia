@@ -34,7 +34,8 @@ export const useDepend = (data) => {
                 handleDepends_on(child.depends_on) &&
                 child.default !== undefined &&
                 child.default !== null &&
-                child.default !== "n"
+                child.default !== "n" &&
+                !child.value
               ) {
                 console.log(child.name, "子");
                 child.clearFocus = false;

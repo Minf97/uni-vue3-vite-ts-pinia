@@ -1,6 +1,17 @@
 
 export const kconfigJSON = [
   {
+    "children": [],
+    "default": "n",
+    "depends_on": null,
+    "help": null,
+    "id": "CL_YYY",
+    "name": "CL_YYY",
+    "range": null,
+    "title": "YYY",
+    "type": "bool"
+  },
+  {
     "children": [
       {
         "children": [
@@ -24,8 +35,8 @@ export const kconfigJSON = [
                     "children": [],
                     "depends_on": "<choice CL_BUTTON_CONTROL_-id-_CLICK_FUN>",
                     "help": null,
-                    "id": "CL_BUTTON_CONTROL_-id-_CLICK_FUN_ON",
-                    "name": "CL_BUTTON_CONTROL_-id-_CLICK_FUN_ON",
+                    "id": "CL_BUTTON_CONTROL_-id-_CLICK_FUN_fun_btn_remote_fun_set_on",
+                    "name": "CL_BUTTON_CONTROL_-id-_CLICK_FUN_fun_btn_remote_fun_set_on",
                     "range": null,
                     "title": "on",
                     "type": "bool",
@@ -35,8 +46,8 @@ export const kconfigJSON = [
                     "children": [],
                     "depends_on": "<choice CL_BUTTON_CONTROL_-id-_CLICK_FUN>",
                     "help": null,
-                    "id": "CL_BUTTON_CONTROL_-id-_CLICK_FUN_OFF",
-                    "name": "CL_BUTTON_CONTROL_-id-_CLICK_FUN_OFF",
+                    "id": "CL_BUTTON_CONTROL_-id-_CLICK_FUN_fun_btn_remote_fun_set_off",
+                    "name": "CL_BUTTON_CONTROL_-id-_CLICK_FUN_fun_btn_remote_fun_set_off",
                     "range": null,
                     "title": "off",
                     "type": "bool"
@@ -56,8 +67,8 @@ export const kconfigJSON = [
                     "children": [],
                     "depends_on": "<choice CL_BUTTON_CONTROL_-id-_DOUBLE_FUN>",
                     "help": null,
-                    "id": "CL_BUTTON_CONTROL_-id-_DOUBLE_FUN_ON",
-                    "name": "CL_BUTTON_CONTROL_-id-_DOUBLE_FUN_ON",
+                    "id": "CL_BUTTON_CONTROL_-id-_DOUBLE_FUN_fun_btn_remote_fun_set_on",
+                    "name": "CL_BUTTON_CONTROL_-id-_DOUBLE_FUN_fun_btn_remote_fun_set_on",
                     "range": null,
                     "title": "on",
                     "type": "bool",
@@ -67,8 +78,8 @@ export const kconfigJSON = [
                     "children": [],
                     "depends_on": "<choice CL_BUTTON_CONTROL_-id-_DOUBLE_FUN>",
                     "help": null,
-                    "id": "CL_BUTTON_CONTROL_-id-_DOUBLE_FUN_OFF",
-                    "name": "CL_BUTTON_CONTROL_-id-_DOUBLE_FUN_OFF",
+                    "id": "CL_BUTTON_CONTROL_-id-_DOUBLE_FUN_fun_btn_remote_fun_set_off",
+                    "name": "CL_BUTTON_CONTROL_-id-_DOUBLE_FUN_fun_btn_remote_fun_set_off",
                     "range": null,
                     "title": "off",
                     "type": "bool"
@@ -88,8 +99,8 @@ export const kconfigJSON = [
                     "children": [],
                     "depends_on": "<choice CL_BUTTON_CONTROL_-id-_LONG_FUN>",
                     "help": null,
-                    "id": "CL_BUTTON_CONTROL_-id-_LONG_FUN_ON",
-                    "name": "CL_BUTTON_CONTROL_-id-_LONG_FUN_ON",
+                    "id": "CL_BUTTON_CONTROL_-id-_LONG_FUN_fun_btn_remote_fun_set_on",
+                    "name": "CL_BUTTON_CONTROL_-id-_LONG_FUN_fun_btn_remote_fun_set_on",
                     "range": null,
                     "title": "on",
                     "type": "bool",
@@ -99,8 +110,8 @@ export const kconfigJSON = [
                     "children": [],
                     "depends_on": "<choice CL_BUTTON_CONTROL_-id-_LONG_FUN>",
                     "help": null,
-                    "id": "CL_BUTTON_CONTROL_-id-_LONG_FUN_OFF",
-                    "name": "CL_BUTTON_CONTROL_-id-_LONG_FUN_OFF",
+                    "id": "CL_BUTTON_CONTROL_-id-_LONG_FUN_fun_btn_remote_fun_set_off",
+                    "name": "CL_BUTTON_CONTROL_-id-_LONG_FUN_fun_btn_remote_fun_set_off",
                     "range": null,
                     "title": "off",
                     "type": "bool"
@@ -172,11 +183,11 @@ export const kconfigJSON = [
           }
         ],
         "depends_on": null,
-        "default": "n",
-        "help": "这就是介绍",
+        "help": null,
         "id": "CL_REMOTE_CONTROL_ENABLED",
         "name": "CL_REMOTE_CONTROL_ENABLED",
         "range": null,
+        "default": "n",
         "title": "Enable remote control",
         "type": "bool"
       },
@@ -211,8 +222,8 @@ export const kconfigJSON = [
                 "children": [],
                 "depends_on": "<choice CL_REMOTE_CONTROL_-id-_FUN>",
                 "help": null,
-                "id": "CL_REMOTE_CONTROL_-id-_FUN_btn_remote_fun_set_on",
-                "name": "CL_REMOTE_CONTROL_-id-_FUN_btn_remote_fun_set_on",
+                "id": "CL_REMOTE_CONTROL_-id-_FUN_fun_btn_remote_fun_set_on",
+                "name": "CL_REMOTE_CONTROL_-id-_FUN_fun_btn_remote_fun_set_on",
                 "range": null,
                 "title": "on",
                 "type": "bool",
@@ -222,8 +233,8 @@ export const kconfigJSON = [
                 "children": [],
                 "depends_on": "<choice CL_REMOTE_CONTROL_-id-_FUN>",
                 "help": null,
-                "id": "CL_REMOTE_CONTROL_-id-_FUN_btn_remote_fun_set_off",
-                "name": "CL_REMOTE_CONTROL_-id-_FUN_btn_remote_fun_set_off",
+                "id": "CL_REMOTE_CONTROL_-id-_FUN_fun_btn_remote_fun_set_off",
+                "name": "CL_REMOTE_CONTROL_-id-_FUN_fun_btn_remote_fun_set_off",
                 "range": null,
                 "title": "off",
                 "type": "bool"
@@ -232,8 +243,8 @@ export const kconfigJSON = [
                 "children": [],
                 "depends_on": "<choice CL_REMOTE_CONTROL_-id-_FUN>",
                 "help": null,
-                "id": "CL_REMOTE_CONTROL_-id-_FUN_btn_remote_fun_set_color",
-                "name": "CL_REMOTE_CONTROL_-id-_FUN_btn_remote_fun_set_color",
+                "id": "CL_REMOTE_CONTROL_-id-_FUN_fun_btn_remote_fun_set_color",
+                "name": "CL_REMOTE_CONTROL_-id-_FUN_fun_btn_remote_fun_set_color",
                 "range": null,
                 "title": "color",
                 "type": "bool"
@@ -242,8 +253,8 @@ export const kconfigJSON = [
                 "children": [],
                 "depends_on": "<choice CL_REMOTE_CONTROL_-id-_FUN>",
                 "help": null,
-                "id": "CL_REMOTE_CONTROL_-id-_FUN_custom",
-                "name": "CL_REMOTE_CONTROL_-id-_FUN_custom",
+                "id": "CL_REMOTE_CONTROL_-id-_FUN_fun_custom",
+                "name": "CL_REMOTE_CONTROL_-id-_FUN_fun_custom",
                 "range": null,
                 "title": "custom",
                 "type": "bool"
@@ -260,7 +271,7 @@ export const kconfigJSON = [
           {
             "children": [],
             "default": "\"\"",
-            "depends_on": "(CL_REMOTE_CONTROL_-id-_FUN_btn_remote_fun_set_color || CL_REMOTE_CONTROL_-id-_FUN_custom) && CL_REMOTE_CONTROL_ENABLED",
+            "depends_on": "(CL_REMOTE_CONTROL_-id-_FUN_fun_btn_remote_fun_set_color || CL_REMOTE_CONTROL_-id-_FUN_fun_custom) && CL_REMOTE_CONTROL_ENABLED",
             "help": null,
             "id": "CL_REMOTE_CONTROL_-id-_FUN_arg",
             "name": "CL_REMOTE_CONTROL_-id-_FUN_arg",
@@ -279,6 +290,46 @@ export const kconfigJSON = [
     "depends_on": null,
     "id": "remote-control",
     "title": "Remote control",
+    "type": "menu"
+  },
+  {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [],
+            "default": "\"\"",
+            "depends_on": null,
+            "help": null,
+            "id": "CL_CUSTOM_-id-_CUSTOM_key",
+            "name": "CL_CUSTOM_-id-_CUSTOM_key",
+            "range": null,
+            "title": "key",
+            "type": "string",
+            "placement": "left"
+          },
+          {
+            "children": [],
+            "default": "\"\"",
+            "depends_on": null,
+            "help": null,
+            "id": "CL_CUSTOM_-id-_CUSTOM_value",
+            "name": "CL_CUSTOM_-id-_CUSTOM_value",
+            "range": null,
+            "title": "value",
+            "type": "string",
+            "placement": "right"
+          }
+        ],
+        "depends_on": null,
+        "id": "custom-define-type-menu2-",
+        "title": "Define",
+        "type": "menu2"
+      }
+    ],
+    "depends_on": null,
+    "id": "custom",
+    "title": "CUSTOM",
     "type": "menu"
   }
 ]
