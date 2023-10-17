@@ -12,6 +12,28 @@ export const kconfigJSON = [
     "type": "bool"
   },
   {
+    "children": [],
+    "default": "n",
+    "depends_on": null,
+    "help": null,
+    "id": "CL_YYY",
+    "name": "CL_YYY",
+    "range": null,
+    "title": "",
+    "type": "bool"
+  },
+  {
+    "children": [],
+    "default": "n",
+    "depends_on": null,
+    "help": null,
+    "id": "CL_YYY",
+    "name": "CL_YYY",
+    "range": null,
+    "title": null,
+    "type": "bool"
+  },
+  {
     "children": [
       {
         "children": [
@@ -137,6 +159,7 @@ export const kconfigJSON = [
         "id": "CL_BUTTON_CONTROL_ENABLED",
         "name": "CL_BUTTON_CONTROL_ENABLED",
         "range": null,
+        "default": "y",
         "title": "Enable button control",
         "type": "bool"
       }

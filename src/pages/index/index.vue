@@ -3,6 +3,7 @@
 import { kconfigJSON } from "./kconfig";
 import {
   checkIfCanShow,
+  searchNodeByKey,
   addDefaultRecursive,
   addResultRecursive,
   treeRecursive,
@@ -31,13 +32,26 @@ apiTest.getKconfig(query.CONFIG_CL_PRODUCT_ID).then((res) => {
     if (Object.keys(config).length == 0) {
       state.value.kconfig = kconfig;
     } else {
-      for (const key in config) {
-        const value = config[key];
-        state.value.kconfig = kconfig.map((item) => {
-          return addDefaultRecursive(item, key, value);
-        });
+      // 把CONFIG_前缀去掉，并且过滤掉旧的不存在的key
+      const newConfig = Object.keys(config).reduce((acc, key) => {
+        const newKey = key.replace(/^CONFIG_/, (match) => "");
+        // acc[newKey] = config[key];
+        let searchNodeByKeyRes;
+        for(let tree of kconfig) {
+          searchNodeByKeyRes = searchNodeByKey(tree, newKey);
+          if(searchNodeByKey(tree, newKey)) break;
+        }
+        // console.log(searchNodeByKeyRes, newKey, "newKey");
+
+        acc[newKey] = searchNodeByKeyRes ? config[key] : '';
+        return acc;
+      }, {});
+      // 递归加入服务器的重载值
+      for (let key in newConfig) {
+        const value = newConfig[key];
+        state.value.kconfig = kconfig.map((item) => addDefaultRecursive(item, key, value));
       }
-      Object.assign(result.value, config);
+      Object.assign(result.value, newConfig);
     }
   });
 });
@@ -63,7 +77,7 @@ const build = () => {
   }
 
   const res = deepClone(result.value);
-  for(let key in res) {
+  for (let key in res) {
     const newKey = "CONFIG_" + key;
     res[newKey] = res[key];
     delete res[key];
@@ -89,7 +103,7 @@ const build = () => {
       if (res) {
         openNotificationWithIcon("success", "成功", "上传表单成功！");
         setTimeout(() => {
-          window.location.href = query.re_url;
+          window.parent.location.href = query.re_url;
         }, 2000);
       }
     })

@@ -43,9 +43,33 @@ export function checkIfCanShow(data: Kconfig.children, type: Kconfig.Type) {
   if (type == 'menu') return data.title !== null && (data.type == type);
   if (type == 'menu2') return data.title !== null && (data.type == type);
 
-  return data.name && (data.type == type)
+  return data.name && (data.type == type) && data.title !== null
 }
 
+export function searchNodeByKey(node, key):boolean {
+  // 递归三要素：
+  // 1.确定参数和返回值 -
+  // 2.确定终止条件 - 找到key/递归结束都没找到key
+  // 3.确定单层递归的逻辑 -
+
+  // 先过滤一层
+  let name = node.name;
+  if (node.name && node.name.match(/-id(\d)+-/g)) {
+    name = node.name.replace(/-id(\d)+-/, '$1');
+  }
+  if(name == key) {
+    return true;
+  }
+
+  if(node.children.length > 0) {
+    for(let child of node.children) {
+      if(searchNodeByKey(child, key)) {
+        return true
+      }
+    }
+  }
+  return false
+}
 
 /**
  * 深度遍历，

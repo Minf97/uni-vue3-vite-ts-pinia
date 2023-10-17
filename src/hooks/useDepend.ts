@@ -35,9 +35,10 @@ export const useDepend = (data) => {
                 child.default !== undefined &&
                 child.default !== null &&
                 child.default !== "n" &&
-                !child.value
+                !child.value &&
+                !child.secondChange
               ) {
-                console.log(child.name, "子");
+                console.log(child.name, obj, "子");
                 child.clearFocus = false;
 
                 changeResult(child.name, child.default, child);
