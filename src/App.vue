@@ -11,4 +11,12 @@ onHide(() => {
 });
 </script>
 
-<style></style>
+<style>
+.flex-4 {
+  flex: 4 !important;
+}
+
+.flex-2 {
+  flex: 2 !important;
+}
+</style>

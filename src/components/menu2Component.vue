@@ -1,22 +1,19 @@
 
 <template>
   <div>
-    <div class="fs-50 fw-700 tracking-wide flex items-center justify-center pt-70" v-if="!isSpecial && flag">
-      <div class="w-70% border-b border-0 border-solid border-#ccc leading-loose">{{ data.title }}</div>
-    </div>
     <div class="fs-40 fw-700 tracking-wide flex items-center justify-center pt-70" v-if="isSpecial && flag">
-      <div class="w-70% border-b border-0 border-solid border-#ccc leading-loose c-#999">{{ data.title }}</div>
+      <div class="w-90% border-b border-0 border-solid border-#ccc leading-loose c-#999">{{ data.title }}</div>
     </div>
-    <div class="w-70% m-auto">
+    <div class="w-90% m-auto">
       <a-row v-for="a in list">
         <a-col :span="24 / colList.length" v-for="n in colList">
           <div v-for="item in a">
-            <stringComponent v-if="checkIfCanShow(item, 'string') && item.placement == n" :data="item" />
-            <intComponent v-if="checkIfCanShow(item, 'int') && item.placement == n" :data="item" />
-            <boolComponent v-if="checkIfCanShow(item, 'bool') && item.placement == n" :data="item" />
-            <choiceComponent v-if="checkIfCanShow(item, 'choice') && item.placement == n" :data="item" />
-            <menuComponent v-if="checkIfCanShow(item, 'menu') && item.placement == n" :data="item" />
-            <menu2Component v-if="checkIfCanShow(item, 'menu2') && item.placement == n" :data="item" />
+            <stringComponent v-if="checkIfCanShow(item, 'string') && item.placement == n" :data="item" :isSpecial="boolTrue" />
+            <intComponent v-if="checkIfCanShow(item, 'int') && item.placement == n" :data="item" :isSpecial="boolTrue" />
+            <boolComponent v-if="checkIfCanShow(item, 'bool') && item.placement == n" :data="item" :isSpecial="boolTrue" />
+            <choiceComponent v-if="checkIfCanShow(item, 'choice') && item.placement == n" :data="item" :isSpecial="boolTrue" />
+            <menuComponent v-if="checkIfCanShow(item, 'menu') && item.placement == n" :data="item" :isSpecial="boolTrue" />
+            <menu2Component v-if="checkIfCanShow(item, 'menu2') && item.placement == n" :data="item" :isSpecial="boolTrue" />
           </div>
         </a-col>
       </a-row>
@@ -43,6 +40,8 @@ const { data, isSpecial } = defineProps<{ data: Kconfig.BoolObj, isSpecial?: boo
 const [api, contextHolder] = notification.useNotification();
 const { flag } = useDepend(data);
 const { result, delResult } = useStore('result');
+
+const boolTrue = ref(true)
 
 
 // 页面加载时，把缓存的自定义项展示出来

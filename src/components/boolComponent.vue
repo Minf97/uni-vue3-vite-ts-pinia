@@ -3,7 +3,7 @@
 <template>
   <div class="flex w-full pt-35 inline-block" v-if="flag">
     <div class="flex flex-1 items-center justify-end text-right p-10 tracking-wide">{{ data.title }} {{ data.title ? ':' : '' }}</div>
-    <div class="flex flex-1 items-center">
+    <div class="flex flex-1 items-center" :class="{'flex-4': isSpecial}">
       <a-switch @change="onChange" v-model:checked="inputVal" />
       <helper v-if="data.help" :helper="data.help" style="margin-left: 10px;"  />
     </div>
@@ -27,7 +27,7 @@ import { checkIfCanShow } from '@/utils/util';
 import { ref } from 'vue';
 import {InfoCircleOutlined} from "@ant-design/icons-vue"
 // 数据
-const { data } = defineProps<{ data: Kconfig.BoolObj }>();
+const { data, isSpecial } = defineProps<{ data: Kconfig.BoolObj, isSpecial: boolean }>();
 const { changeResult, delResult } = useStore('result');
 const { flag } = useDepend(data);
 

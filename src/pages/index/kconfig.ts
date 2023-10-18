@@ -1658,6 +1658,18 @@ export const kconfigJSON = [
                 "depends_on": "CL_CUSTOM_DEFINE_ENABLE && CL_CUSTOM_DEFINE_ENABLE",
                 "help": null,
                 "id": "CL_CUSTOM_-id-_DEFINE_value",
+                "name": "CL_CUSTOM_-id-_DEFINE_valuedddd",
+                "range": null,
+                "title": "23433",
+                "type": "string",
+                "placement": "middle"
+              },
+              {
+                "children": [],
+                "default": "\"\"",
+                "depends_on": "CL_CUSTOM_DEFINE_ENABLE && CL_CUSTOM_DEFINE_ENABLE",
+                "help": null,
+                "id": "CL_CUSTOM_-id-_DEFINE_value",
                 "name": "CL_CUSTOM_-id-_DEFINE_value",
                 "range": null,
                 "title": "\u503c",

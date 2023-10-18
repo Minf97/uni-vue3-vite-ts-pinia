@@ -85,6 +85,8 @@ export function searchNodeByKey(node, key):boolean {
  * @returns
  */
 export function addDefaultRecursive(obj, name, value) {
+  // 对默认值做一层处理
+  obj.default && (obj.default = removeEscapedQuotes(obj.default));
   let objName = obj.name;
   if (objName && objName.match(/-id[\w\d]+-/)) {
     objName = objName.replace(/-id[\w\d]+-/, '1');
@@ -272,6 +274,8 @@ export function checkIsHex(val: string): boolean {
 
 
 export function removeEscapedQuotes(str) {
+  console.log(str, "tttttttttttt");
+
   return str ? str.replace(/"/g, '') : '';
 }
 

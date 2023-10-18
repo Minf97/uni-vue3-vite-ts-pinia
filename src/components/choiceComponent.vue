@@ -9,7 +9,7 @@
       </div>
     </a-tooltip>
 
-    <div class="flex flex-1 items-center">
+    <div class="flex flex-1 items-center" :class="{'flex-4': isSpecial}">
       <a-select
         class="w-100% max-w-800"
         ref="select"
@@ -34,7 +34,7 @@ import { useDepend } from "@/hooks/useDepend";
 import { ref, watch } from "vue";
 
 // 数据
-const { data } = defineProps<{ data: Kconfig.ChoiceObj }>();
+const { data, isSpecial } = defineProps<{ data: Kconfig.ChoiceObj, isSpecial:boolean }>();
 const { changeResult, delResult, findKey } = useStore("result");
 const { flag } = useDepend(data);
 

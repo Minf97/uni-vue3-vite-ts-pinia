@@ -5,9 +5,10 @@
     >
       {{ data.title }} {{ data.title ? ":" : "" }}
     </div>
-    <div class="flex-1">
+    <div class="flex-1" :class="{'flex-4': isSpecial}">
       <a-input
-        class="w-400"
+
+        style="max-width: 800rpx;"
         @change="onChange"
         v-model:value="inputVal"
         :placeholder="data.help || data.title"
@@ -21,11 +22,11 @@
   </div>
   <!-- 特殊项 - children - 用于递归 -->
   <div v-for="item in data.children" v-if="flag">
-    <stringComponent v-if="checkIfCanShow(item, 'string')" :data="item" />
-    <intComponent v-if="checkIfCanShow(item, 'int')" :data="item" />
-    <boolComponent v-if="checkIfCanShow(item, 'bool')" :data="item" />
-    <choiceComponent v-if="checkIfCanShow(item, 'choice')" :data="item" />
-    <menuComponent v-if="checkIfCanShow(item, 'menu')" :data="item" />
+    <stringComponent v-if="checkIfCanShow(item, 'string')" :data="item" :isSpecial="isSpecial" />
+    <intComponent v-if="checkIfCanShow(item, 'int')" :data="item" :isSpecial="isSpecial" />
+    <boolComponent v-if="checkIfCanShow(item, 'bool')" :data="item" :isSpecial="isSpecial" />
+    <choiceComponent v-if="checkIfCanShow(item, 'choice')" :data="item" :isSpecial="isSpecial" />
+    <menuComponent v-if="checkIfCanShow(item, 'menu')" :data="item" :isSpecial="isSpecial" />
   </div>
 </template>
 
@@ -35,9 +36,12 @@ import { useDepend } from "@/hooks/useDepend";
 import { checkIfCanShow, removeEscapedQuotes } from "@/utils/util";
 import { ref, watch, watchEffect } from "vue";
 // 数据
-const { data } = defineProps<{ data: Kconfig.StringObj }>();
+const { data, isSpecial } = defineProps<{ data: Kconfig.StringObj, isSpecial:boolean }>();
 const { changeResult } = useStore("result");
 const { flag } = useDepend(data);
+
+console.log("isSpecial", isSpecial, data.name);
+
 
 // 双向绑定
 const inputVal = ref(removeEscapedQuotes(data.default));

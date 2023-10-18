@@ -10,6 +10,7 @@ import {
   parseQueryParams,
 } from "@/utils/util";
 import { notification } from "ant-design-vue";
+import { RightOutlined } from "@ant-design/icons-vue";
 import apiTest from "@/api/apiTest";
 import { ref, reactive } from "vue";
 import { deepClone } from "@/utils/clone";
@@ -17,6 +18,7 @@ import { deepClone } from "@/utils/clone";
 const { result } = useStore("result");
 const { state } = useStore("app");
 const CONFIG_CL_DEV_BRANCH = ref("release");
+const resultFlag = ref(false);
 // query传参
 const query = reactive<Query>(parseQueryParams(window.location.href));
 
@@ -37,9 +39,9 @@ apiTest.getKconfig(query.CONFIG_CL_PRODUCT_ID).then((res) => {
         const newKey = key.replace(/^CONFIG_/, (match) => "");
         // 在kconfig里查找，这个key是否存在，存在就赋值，不存在就丢弃
         let searchNodeByKeyRes = false;
-        for(let tree of kconfig) {
+        for (let tree of kconfig) {
           searchNodeByKeyRes = searchNodeByKey(tree, newKey);
-          if(searchNodeByKey(tree, newKey)) break;
+          if (searchNodeByKey(tree, newKey)) break;
         }
         searchNodeByKeyRes && (acc[newKey] = config[key]);
         return acc;
@@ -48,7 +50,9 @@ apiTest.getKconfig(query.CONFIG_CL_PRODUCT_ID).then((res) => {
       // 递归加入服务器的重载值
       for (let key in newConfig) {
         const value = newConfig[key];
-        state.value.kconfig = kconfig.map((item) => addDefaultRecursive(item, key, value));
+        state.value.kconfig = kconfig.map((item) =>
+          addDefaultRecursive(item, key, value)
+        );
       }
       Object.assign(result.value, newConfig);
     }
@@ -63,6 +67,7 @@ const openNotificationWithIcon = (
   notification[type]({
     message,
     description,
+    placement: "bottom-right",
   });
 };
 
@@ -85,14 +90,17 @@ const build = () => {
   const postForm = {
     ...res,
     ...{
-      CONFIG_CL_PRODUCT_ID: query.CONFIG_CL_PRODUCT_ID,
-      CONFIG_CL_DEV_BRANCH: CONFIG_CL_DEV_BRANCH.value,
+      CONFIG_CL_PRODUCT_ID: `\"${query.CONFIG_CL_PRODUCT_ID}\"`,
+      CONFIG_CL_DEV_BRANCH: `\"${CONFIG_CL_DEV_BRANCH.value}\"`,
     },
   };
-  uni.setClipboardData({data: JSON.stringify(postForm), success: () => {
-    uni.showToast({title: "复制成功"})
-  }})
-  return;
+  // uni.setClipboardData({
+  //   data: JSON.stringify(postForm),
+  //   success: () => {
+  //     uni.showToast({ title: "复制成功" });
+  //   },
+  // });
+  // return;
 
   // 上传表单
   apiTest
@@ -114,9 +122,17 @@ const build = () => {
 
 <template>
   <div class="pb-100">
-    <text>{{ result }}</text>
+    <RightOutlined
+      @click="
+        () => {
+          resultFlag = !resultFlag;
+        }
+      "
+    />
+    <text contenteditable="true" v-if="resultFlag">{{ result }}</text>
+
     <!-- 开发分支 -->
-    <div class="flex w-full pt-35">
+    <div style="margin: 0 auto;" class="flex w-80% pt-35">
       <a-tooltip placement="bottomRight">
         <template #title>{{ toolTip }}</template>
         <div
@@ -137,37 +153,21 @@ const build = () => {
         </a-select>
       </div>
     </div>
-    <!-- 主版本 -->
-    <div class="flex w-full pt-35">
-      <div
-        class="flex flex-1 items-center justify-end text-right p-10 tracking-wide"
-      >
-        主版本
-      </div>
-      <div class="flex-1">
-        <a-input class="w-400" v-model:value="query.major_version" />
-      </div>
-    </div>
-    <!-- 功能版本 -->
-    <div class="flex w-full pt-35">
-      <div
-        class="flex flex-1 items-center justify-end text-right p-10 tracking-wide"
-      >
-        功能版本
-      </div>
-      <div class="flex-1">
-        <a-input class="w-400" v-model:value="query.minor_version" />
-      </div>
-    </div>
-    <!-- bug修改版本 -->
-    <div class="flex w-full pt-35">
-      <div
-        class="flex flex-1 items-center justify-end text-right p-10 tracking-wide"
-      >
-        bug修改版本
-      </div>
-      <div class="flex-1">
-        <a-input class="w-400" v-model:value="query.revision" />
+    <!-- 版本 -->
+    <div class="flex dddd">
+      <div style="margin: 0 auto;" class="flex pt-35 w-full">
+        <div
+          class="flex flex-1 items-center justify-end text-right p-10 tracking-wide"
+        >
+          版本:
+        </div>
+        <div class="flex flex-1 " style=" align-items: baseline;vertical-align: bottom;">
+          <a-input class="max-w-110" v-model:value="query.major_version" placeholder="主" />
+          <text style="padding: 0 10rpx;">.</text>
+          <a-input class="max-w-110" v-model:value="query.minor_version" placeholder="功能" />
+          <text style="padding: 0 10rpx;">. </text>
+          <a-input class="max-w-110" v-model:value="query.revision" placeholder="修改" />
+        </div>
       </div>
     </div>
     <hr style="margin-top: 100px;" />
@@ -190,4 +190,12 @@ const build = () => {
   <contextHolder />
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.dddd {
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  width: 80%;
+}
+</style>
