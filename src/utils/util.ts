@@ -52,11 +52,17 @@ export function searchNodeByKey(node, key):boolean {
   // 2.确定终止条件 - 找到key/递归结束都没找到key
   // 3.确定单层递归的逻辑 -
 
-  // 先过滤一层
+  // 先对名字处理一下
   let name = node.name;
   if (node.name && node.name.match(/-id(\d)+-/g)) {
-    name = node.name.replace(/-id(\d)+-/, '$1');
+    name = node.name.replace(/-id(\d)+-/, '1');
   }
+  // 避免自定义key的第n项无法载入
+  if(key && key.match(/_(\d)+_/g)) {
+    key = key.replace(/_(\d)+_/, '_1_');
+  }
+
+
   if(name == key) {
     return true;
   }

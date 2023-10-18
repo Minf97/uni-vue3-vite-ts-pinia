@@ -32,20 +32,19 @@ apiTest.getKconfig(query.CONFIG_CL_PRODUCT_ID).then((res) => {
     if (Object.keys(config).length == 0) {
       state.value.kconfig = kconfig;
     } else {
-      // 把CONFIG_前缀去掉，并且过滤掉旧的不存在的key
+      // 把CONFIG_前缀去掉，并且过滤掉旧的不存在的key、branch、版本号 这些没用的信息
       const newConfig = Object.keys(config).reduce((acc, key) => {
         const newKey = key.replace(/^CONFIG_/, (match) => "");
-        // acc[newKey] = config[key];
-        let searchNodeByKeyRes;
+        // 在kconfig里查找，这个key是否存在，存在就赋值，不存在就丢弃
+        let searchNodeByKeyRes = false;
         for(let tree of kconfig) {
           searchNodeByKeyRes = searchNodeByKey(tree, newKey);
           if(searchNodeByKey(tree, newKey)) break;
         }
-        // console.log(searchNodeByKeyRes, newKey, "newKey");
-
-        acc[newKey] = searchNodeByKeyRes ? config[key] : '';
+        searchNodeByKeyRes && (acc[newKey] = config[key]);
         return acc;
       }, {});
+
       // 递归加入服务器的重载值
       for (let key in newConfig) {
         const value = newConfig[key];

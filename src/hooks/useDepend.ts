@@ -9,6 +9,14 @@ export const useDepend = (data) => {
     // 如果出现不满足，则置位false
     setFlag(handleDepends_on(data.depends_on))
 
+    console.log(data.name, 666);
+
+    if(!handleDepends_on(data.depends_on)) {
+      console.log(data.name,data, "ttt");
+
+      data.value = null;
+    }
+
     // 然后深度遍历，如果子(注意只处理子，不处理自身)有默认值，且依赖都打开，则把默认值加到result树上
     function dfsAddDefault(obj) {
       // choice要单独处理：
