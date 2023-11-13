@@ -46,15 +46,13 @@ const toolTip = ref("");
 watch(
   data,
   (newVal) => {
-    console.log(newVal.name, newVal.value, "choice更新", inputVal.value);
+    // console.log(newVal.name, newVal.value, "choice更新", inputVal.value);
     if (data.clearFocus) {
       inputVal.value = "";
       return;
     }
     data.children.map((item) => {
       if (data.secondChange && data.value !== "y") {
-        // console.log("choice更新改变：",newVal.name, data.name, data.value);
-
         inputVal.value = data.value;
       }
       if (item.default && !data.secondChange) {

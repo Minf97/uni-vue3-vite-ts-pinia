@@ -39,9 +39,9 @@ export default defineStore(
       key = handleKey(key);
       result.value[key] = val;
 
-      if(!val) return;
+      if (!val) return;
 
-      obj.value = val ;
+      obj.value = val;
       obj.secondChange = true;
       obj.clearFocus = false;
       if (obj.type === 'choice') {
@@ -51,7 +51,7 @@ export default defineStore(
           console.log(obj.name, name, key);
           if (name == key) {
             obj.value = child.title;
-            console.log(obj,obj.value, key, "----------");
+            console.log(obj, obj.value, key, "----------");
 
           }
         }
@@ -99,10 +99,11 @@ export default defineStore(
                   const nodeKey = handleKey(node.name);
                   delete result.value[nodeKey];
                   delChildKey(node);
-                  console.log(node, nodeKey, "删除子依赖项的key");
+                  if(node.parent && node.parent.type === 'choice') {
+                    node.parent.value = null;
+                  }
+                  console.log(node, node.title, "删除子依赖项的key");
                 }
-              } else {
-                // console.log(dependsList, nameList, intersection, node.name);
               }
             }
             if (node.children.length > 0) {

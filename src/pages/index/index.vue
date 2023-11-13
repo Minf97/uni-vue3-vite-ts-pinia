@@ -15,7 +15,7 @@ import apiTest from "@/api/apiTest";
 import { ref, reactive } from "vue";
 import { deepClone } from "@/utils/clone";
 
-const { result, delResult } = useStore("result");
+const { result, delResult, JSONList } = useStore("result");
 const { state } = useStore("app");
 const CONFIG_CL_DEV_BRANCH = ref("release");
 const resultFlag = ref(true);
@@ -50,6 +50,9 @@ apiTest.getKconfig(query.CONFIG_CL_PRODUCT_ID).then((res) => {
     }
   });
 });
+
+console.log(JSONList, "??");
+
 
 const openNotificationWithIcon = (
   type: "success" | "error" | "info" | "warning",

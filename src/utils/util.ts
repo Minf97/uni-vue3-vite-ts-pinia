@@ -177,9 +177,11 @@ export function addResultRecursive(obj, parent = null) {
 
     console.log(obj.name, 77776);
   }
+  // 新增字段，parent
+  parent && (obj.parent = parent);
   // 将默认值加入result
   if (handleDepends_on(obj.depends_on) && obj.name) {
-    if(parent?.type == 'choice' && obj.default === 'y') {
+    if (parent?.type == 'choice' && obj.default === 'y') {
       parent.value = obj.name;
       changeResult(obj.name, obj.default, parent);
     }
