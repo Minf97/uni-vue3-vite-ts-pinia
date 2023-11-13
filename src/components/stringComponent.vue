@@ -40,9 +40,6 @@ const { data, isSpecial } = defineProps<{ data: Kconfig.StringObj, isSpecial:boo
 const { changeResult } = useStore("result");
 const { flag } = useDepend(data);
 
-console.log("isSpecial", isSpecial, data.name);
-
-
 // 双向绑定
 const inputVal = ref(removeEscapedQuotes(data.default));
 
@@ -50,13 +47,13 @@ watch(inputVal, () => {
   data.status = "";
 });
 watch(data, () => {
-  console.log("tttt!!!变化了", data);
-  (inputVal.value = data.value);
+  // console.log("tttt!!!变化了", data);
+  (inputVal.value = removeEscapedQuotes(data.value));
 });
 // 输入框改变事件
 const onChange = () => {
   changeResult(data.name, `\"${inputVal.value}\"`, data);
-  data.value = inputVal.value;
+  data.value = removeEscapedQuotes(inputVal.value);
 };
 </script>
 

@@ -1,4 +1,6 @@
 import { handleDepends_on, useDepend } from "@/hooks/useDepend";
+import { deepClone } from "./clone";
+import { watch } from "vue";
 
 
 
@@ -46,35 +48,71 @@ export function checkIfCanShow(data: Kconfig.children, type: Kconfig.Type) {
   return data.name && (data.type == type) && data.title !== null
 }
 
-export function searchNodeByKey(node, key):boolean {
-  // 递归三要素：
-  // 1.确定参数和返回值 -
-  // 2.确定终止条件 - 找到key/递归结束都没找到key
-  // 3.确定单层递归的逻辑 -
+/**
+ * 检查服务器的缓存值是否正确
+ * @param config 服务器缓存值
+ * @returns
+ */
+export function filterConfigValue(config) {
+  const { JSONList, delResult, findJSONListKey } = useStore('result')
+  const configKeys = Object.keys(config);
+  const newConfig = deepClone(config);
 
-  // 先对名字处理一下
-  let name = node.name;
-  if (node.name && node.name.match(/-id(\d)+-/g)) {
-    name = node.name.replace(/-id(\d)+-/, '1');
-  }
-  // 避免自定义key的第n项无法载入
-  if(key && key.match(/_(\d)+_/g)) {
-    key = key.replace(/_(\d)+_/, '_1_');
-  }
-
-
-  if(name == key) {
-    return true;
+  // 将key的CONFIG_前缀去掉
+  for (let key in newConfig) {
+    const val = newConfig[key];
+    delete newConfig[key];
+    const newKey = key.replace(/^CONFIG_/, (match) => "");
+    newConfig[newKey] = val;
   }
 
-  if(node.children.length > 0) {
-    for(let child of node.children) {
-      if(searchNodeByKey(child, key)) {
-        return true
-      }
+  const delConfigKey = (key) => {
+    key = key.replace(/-id(\d+)-/g, "$1");
+    delete newConfig[key];
+    // delResult(key);
+  }
+
+  const handleCustom = (key) => {
+    // debugger
+    const newkey = key.replace(/_(\d+)_/g, "_-id1-_")
+    const res = findJSONListKey(newkey);
+    // choice
+    if (typeof res === 'object') {
+      res.forEach(item => delConfigKey(item)) // 全部干掉再赋值服务器的缓存值
+      newConfig[key] = config[key];
+    }
+
+    // 清除不存在的值
+    if (!res) {
+      delete newConfig[key]
     }
   }
-  return false
+
+  const handlePrimary = (key) => {
+    const res = findJSONListKey(key)
+    // choice
+    if (typeof res === 'object') {
+      res.forEach(item => delConfigKey(item)) // 全部干掉再赋值服务器的缓存值
+      newConfig[key] = config[key];
+    }
+    // 清除不存在的值
+    if (!res) {
+      delete newConfig[key]
+    }
+  }
+
+  // 旧值不要：JSONList不存在的值，也会过滤掉
+  // 注意不要把自定义key给过滤掉了
+  configKeys.forEach(key => {
+    const ifCustomKey = /_(\d+)_/.test(key);
+    ifCustomKey ? handleCustom(key) : handlePrimary(key);
+  })
+
+
+
+  // console.log(newConfig, "newConfig1");
+
+  return newConfig
 }
 
 /**
@@ -84,17 +122,30 @@ export function searchNodeByKey(node, key):boolean {
  * @param value
  * @returns
  */
-export function addDefaultRecursive(obj, name, value) {
+export function addDefaultRecursive(obj, name, value, parent = null) {
+  const { findJSONListKey, result, delResult } = useStore('result')
   // 对默认值做一层处理
   obj.default && (obj.default = removeEscapedQuotes(obj.default));
+
+  // 对名称做一层处理
   let objName = obj.name;
-  if (objName && objName.match(/-id[\w\d]+-/)) {
-    objName = objName.replace(/-id[\w\d]+-/, '1');
+  if (objName && objName.match(/-id(\d+)-/)) {
+    objName = objName.replace(/-id(\d+)-/, '1');
   }
 
+  // 匹配成功
   if (objName === name) {
-    obj.value = value;
-    obj.default = value;
+    if (parent && parent.type == 'choice') {
+      const choiceList = findJSONListKey(obj.name);
+      const resultKeys = Object.keys(result.value);
+      const defaultKeyList = choiceList.filter(item => resultKeys.includes(item.replace(/-id(\d+)-/g, "$1")));
+      defaultKeyList.length && defaultKeyList.forEach(defaultKey => delResult(defaultKey));
+      parent.value = obj.name;
+    }
+    else {
+      obj.value = value;
+      obj.default = value;
+    }
   }
 
   // 这里遇到带数字的，需要自动新增key
@@ -103,7 +154,7 @@ export function addDefaultRecursive(obj, name, value) {
 
   if (Array.isArray(obj.children) && obj.children.length > 0) {
     for (const child of obj.children) {
-      addDefaultRecursive(child, name, value);
+      addDefaultRecursive(child, name, value, obj);
     }
   }
 
@@ -111,62 +162,41 @@ export function addDefaultRecursive(obj, name, value) {
 }
 
 /**
- * 深度遍历2，
+ * 深度遍历2，修改名字和依赖
  * @param obj 对象
  * @param name name值
  * @param value
  * @returns
  */
-export function addResultRecursive(obj) {
-  const { changeResult } = useStore('result');
-  dfc(obj)
-  // 如果是choice，需要单独处理
-  if (obj.type == 'choice') {
-    if (handleDepends_on(obj.depends_on)) {
-      if (Array.isArray(obj.children) && obj.children.length > 0) {
-        for (const child of obj.children) {
-          addResultRecursive(child);
-        }
-      }
-    }
-    // 把默认值去掉，避免误会
-    // else {
-    //   for(const child of obj.children) {
-    //     child.default = null;
-    //   }
-    // }
+export function addResultRecursive(obj, parent = null) {
+  const { changeResult, setJSONList } = useStore('result')
+  // 修改名字和依赖(针对自定义key)
+  if (obj.name && obj.name.match(/-id-/)) {
+    obj.name = obj.name.replace(/-id-/, '-id1-');
+    obj.depends_on = obj.depends_on ? obj.depends_on?.replace(/-id-/g, '-id1-') : obj.depends_on;
+
+    console.log(obj.name, 77776);
   }
-  else {
-    if (obj.default) {
-      // 要检查下他的依赖项开了没有
-      console.log(obj.name, handleDepends_on(obj.depends_on), "依赖？");
-
-      if (handleDepends_on(obj.depends_on)) {
-        changeResult(obj.name, obj.default, obj);
-        obj.value = obj.default;
-      }
-      else {
-        obj.value = null;
-      }
+  // 将默认值加入result
+  if (handleDepends_on(obj.depends_on) && obj.name) {
+    if(parent?.type == 'choice' && obj.default === 'y') {
+      parent.value = obj.name;
+      changeResult(obj.name, obj.default, parent);
+    }
+    else {
+      changeResult(obj.name, obj.default, obj);
+      obj.value = obj.default;
     }
 
-    if (Array.isArray(obj.children) && obj.children.length > 0) {
-      for (const child of obj.children) {
-        addResultRecursive(child);
-      }
-    }
   }
 
-  function dfc(obj) {
-    if (obj.name && obj.name.match(/-id-/)) {
-      obj.name = obj.name.replace(/-id-/, '-id1-');
+  if (parent?.type != 'choice') {
+    setJSONList(obj);
+  }
 
-      obj.depends_on = obj.depends_on ? obj.depends_on?.replace(/-id-/g, '-id1-') : obj.depends_on;
-    }
-    if (Array.isArray(obj.children) && obj.children.length > 0) {
-      for (const child of obj.children) {
-        dfc(child);
-      }
+  if (Array.isArray(obj.children) && obj.children.length > 0) {
+    for (const child of obj.children) {
+      addResultRecursive(child, obj);
     }
   }
 }
@@ -183,7 +213,7 @@ export function treeRecursive(obj) {
   let flag1 = true;
   if (obj.type == 'menu' || obj.type == 'menu2' || obj.type == 'bool') {
     if (obj.type == 'menu2') {
-      console.log(obj, 6666);
+      // console.log(obj, 6666);
     }
   }
   else if (
@@ -222,7 +252,7 @@ export function findTreeRecursive(obj) {
   let flag1 = true;
   if (obj.type == 'menu' || obj.type == 'menu2' || obj.type == 'bool') {
     if (obj.type == 'menu2') {
-      console.log(obj, 6666);
+      // console.log(obj, 6666);
     }
   }
   else if (!obj.value && flag.value) {
@@ -274,9 +304,7 @@ export function checkIsHex(val: string): boolean {
 
 
 export function removeEscapedQuotes(str) {
-  console.log(str, "tttttttttttt");
-
-  return str ? str.replace(/"/g, '') : '';
+  return str ? str.replace(/^"|"$/g, '') : '';
 }
 
 // recursive

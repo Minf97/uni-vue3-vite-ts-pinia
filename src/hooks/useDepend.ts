@@ -2,31 +2,34 @@ import { useFlag } from '@/hooks/useFlag'
 import { ref, watch } from 'vue';
 
 export const useDepend = (data) => {
-  const { result, changeResult, delResult } = useStore('result');
+  const { result, changeResult, delResult, findJSONListKey } = useStore('result');
   const { flag, setFlag } = useFlag(true);
 
   watch(result, () => {
     // 如果出现不满足，则置位false
     setFlag(handleDepends_on(data.depends_on))
 
-    console.log(data.name, 666);
-
-    if(!handleDepends_on(data.depends_on)) {
-      console.log(data.name,data, "ttt");
-
+    if (!handleDepends_on(data.depends_on)) {
       data.value = null;
     }
+
+    const resultKeys = Object.keys(result.value)
 
     // 然后深度遍历，如果子(注意只处理子，不处理自身)有默认值，且依赖都打开，则把默认值加到result树上
     function dfsAddDefault(obj) {
       // choice要单独处理：
-      //  如果它的依赖项打开了，就去遍历子级，如果有默认值且依赖项打开，放到树里
+      //  如果它的依赖项打开了，就去遍历子级，如果有默认值且依赖项打开，放到树里(补充：还要考虑树里是否已经有该choice的值，再判断是否放到树里)
       // 普通组件的处理：
       //  如果它的依赖项打开了，就深度遍历其子节点，如果子节点依赖打开且有default，就加入到树里
       if (obj.type === 'choice') {
         if (handleDepends_on(obj.depends_on) && !obj.secondChange) {
+          const objChildrenKeys = obj.children.map(child => child.name);
           for (let child of obj.children) {
-            if (child.default == 'y' && handleDepends_on(child.depends_on)) {
+            if (
+              child.default == 'y' &&
+              handleDepends_on(child.depends_on) &&
+              !resultKeys.filter(item => objChildrenKeys.includes(item))
+            ) {
               changeResult(child.name, child.default, obj)
             }
           }
@@ -34,7 +37,7 @@ export const useDepend = (data) => {
       }
       else {
         if (handleDepends_on(obj.depends_on) && !obj.secondChange) {
-          console.log(obj.name, "子111");
+          // console.log(obj.name, "子111");
           // dfs
           if (obj.children.length > 0) {
             for (let child of obj.children) {
@@ -46,7 +49,7 @@ export const useDepend = (data) => {
                 !child.value &&
                 !child.secondChange
               ) {
-                console.log(child.name, obj, "子");
+                // console.log(child.name, obj, "子");
                 child.clearFocus = false;
 
                 changeResult(child.name, child.default, child);
@@ -61,19 +64,19 @@ export const useDepend = (data) => {
 
     dfsAddDefault(data);
     // 针对choice
-    // if (data.type == 'choice') {
-    //   data.children.forEach((item, index) => {
-    //     if (!handleDepends_on(item.depends_on)) {
-    //       delResult(data.children[index].name);
-    //       data.children[index].hide = true;
-    //       data.children[index].default = "n";
-    //       return;
-    //     }
-    //     console.log(data);
+    if (data.type == 'choice') {
+      data.children.forEach((item, index) => {
+        if (!handleDepends_on(item.depends_on)) {
+          delResult(data.children[index].name);
+          data.children[index].hide = true;
+          data.children[index].default = "n";
+          return;
+        }
+        // console.log(data);
 
-    //     data.children[index].hide = false;
-    //   })
-    // }
+        data.children[index].hide = false;
+      })
+    }
   }, { immediate: true, deep: true })
 
   return {
@@ -109,6 +112,7 @@ export function handleDepends_on(str: string | null): boolean {
       .filter(item => item.trim() && !regex.test(item))
       .map(item => item.replace(/\s*/g, ''));
 
+    // console.log(str,list, list.every(key => findKey(key)), "害1");
     return list.every(key => findKey(key))
   }
 
@@ -125,7 +129,7 @@ export function handleDepends_on(str: string | null): boolean {
   if (!str) return true;
   // 多元计算 - 最复杂的情况 - 同时存在 && 和 ||
   if (str.includes('&&') && str.includes('||')) {
-    console.log(str, "检查str出现目标");
+    // console.log(str, "检查str出现目标");
     const regex1 = /\([^()]*\)/;
     // 第一个表达式
     const first = str.match(regex1)[0];
@@ -138,11 +142,9 @@ export function handleDepends_on(str: string | null): boolean {
     // 如果第一个表达式是 ||
     if (first.includes('||')) {
       firstResult = handleOr(first.replace(/\(|\)/g, ""));
-      console.log(first, firstResult, "第一个表达式结果");
-
+      // console.log(first, firstResult, "第一个表达式结果");
       const secondKey = second.replace("&&", "").replace(/\s/g, "");
-      console.log(secondKey, findKey(secondKey), "第二个表达式结果");
-
+      // console.log(secondKey, findKey(secondKey), "第二个表达式结果");
       return findKey(secondKey) && firstResult;
     }
     // 如果第一个表达式是 &&
@@ -161,5 +163,17 @@ export function handleDepends_on(str: string | null): boolean {
     if (!regex.test(str)) return findKey(str)
     // <choice name1>
     return true;
+  }
+}
+
+
+
+function findIntersection(arr1, arr2) {
+  const intersection = arr1.filter(item => arr2.includes(item));
+
+  if (intersection.length > 0) {
+    return intersection;  // 返回相交的元素数组
+  } else {
+    return false;  // 返回 false 表示没有相交元素
   }
 }

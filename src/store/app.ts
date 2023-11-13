@@ -30,7 +30,7 @@ export default defineStore({
 
       function recursive(node, name) {
         if (node.name === name) {
-          console.log(node.name, name, 9999);
+          // console.log(node.name, name, 9999);
           return node;
         }
         if (node.children.length > 0) {

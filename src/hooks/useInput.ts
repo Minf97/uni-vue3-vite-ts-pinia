@@ -11,7 +11,7 @@ export const useInput = (data) => {
   const range = reactive({ min: 0, max: 65535 });
 
   watch(data, () => {
-    console.log("更新了int：", data);
+    // console.log("更新了int：", data);
     inputVal.value = data.value;
   }, { immediate: true, deep: true })
 

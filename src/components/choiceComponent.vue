@@ -31,6 +31,7 @@
 
 <script setup lang="ts">
 import { useDepend } from "@/hooks/useDepend";
+import { removeEscapedQuotes } from "@/utils/util";
 import { ref, watch } from "vue";
 
 // 数据
@@ -45,20 +46,20 @@ const toolTip = ref("");
 watch(
   data,
   (newVal) => {
-    console.log(newVal.name, newVal, "choice更新", inputVal.value);
+    console.log(newVal.name, newVal.value, "choice更新", inputVal.value);
     if (data.clearFocus) {
       inputVal.value = "";
       return;
     }
     data.children.map((item) => {
       if (data.secondChange && data.value !== "y") {
-        console.log("choice更新改变：", data.name, data.value);
+        // console.log("choice更新改变：",newVal.name, data.name, data.value);
 
         inputVal.value = data.value;
       }
       if (item.default && !data.secondChange) {
         inputVal.value = item.name;
-        data.value = item.default;
+        data.value = item.default ;
       }
     });
   },
@@ -98,7 +99,7 @@ const onChange = (e) => {
   changeResult(e, "y", data);
   data.clearFocus = false;
   // choice也该补上值
-  data.value = e;
+  data.value = e
 };
 </script>
 

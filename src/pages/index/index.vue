@@ -3,7 +3,7 @@
 import { kconfigJSON } from "./kconfig";
 import {
   checkIfCanShow,
-  searchNodeByKey,
+  filterConfigValue,
   addDefaultRecursive,
   addResultRecursive,
   treeRecursive,
@@ -15,10 +15,10 @@ import apiTest from "@/api/apiTest";
 import { ref, reactive } from "vue";
 import { deepClone } from "@/utils/clone";
 
-const { result } = useStore("result");
+const { result, delResult } = useStore("result");
 const { state } = useStore("app");
 const CONFIG_CL_DEV_BRANCH = ref("release");
-const resultFlag = ref(false);
+const resultFlag = ref(true);
 // query传参
 const query = reactive<Query>(parseQueryParams(window.location.href));
 
@@ -35,25 +35,17 @@ apiTest.getKconfig(query.CONFIG_CL_PRODUCT_ID).then((res) => {
       state.value.kconfig = kconfig;
     } else {
       // 把CONFIG_前缀去掉，并且过滤掉旧的不存在的key、branch、版本号 这些没用的信息
-      const newConfig = Object.keys(config).reduce((acc, key) => {
-        const newKey = key.replace(/^CONFIG_/, (match) => "");
-        // 在kconfig里查找，这个key是否存在，存在就赋值，不存在就丢弃
-        let searchNodeByKeyRes = false;
-        for (let tree of kconfig) {
-          searchNodeByKeyRes = searchNodeByKey(tree, newKey);
-          if (searchNodeByKey(tree, newKey)) break;
-        }
-        searchNodeByKeyRes && (acc[newKey] = config[key]);
-        return acc;
-      }, {});
+      const newConfig = filterConfigValue(config);
+      console.log(newConfig, "newConfig");
 
-      // 递归加入服务器的重载值
+      // 递归加入服务器的缓存值
       for (let key in newConfig) {
         const value = newConfig[key];
-        state.value.kconfig = kconfig.map((item) =>
-          addDefaultRecursive(item, key, value)
-        );
+        state.value.kconfig = kconfig.map((item) => {
+          return addDefaultRecursive(item, key, value);
+        });
       }
+
       Object.assign(result.value, newConfig);
     }
   });
@@ -109,6 +101,7 @@ const build = () => {
       console.log(res);
       if (res) {
         openNotificationWithIcon("success", "成功", "上传表单成功！");
+        uni.showLoading({ title: "上传成功~等待跳转页面" });
         setTimeout(() => {
           window.parent.location.href = query.re_url;
         }, 2000);
@@ -161,12 +154,27 @@ const build = () => {
         >
           版本:
         </div>
-        <div class="flex flex-1 " style=" align-items: baseline;vertical-align: bottom;">
-          <a-input class="max-w-110" v-model:value="query.major_version" placeholder="主" />
+        <div
+          class="flex flex-1"
+          style="align-items: baseline; vertical-align: bottom;"
+        >
+          <a-input
+            class="max-w-110"
+            v-model:value="query.major_version"
+            placeholder="主"
+          />
           <text style="padding: 0 10rpx;">.</text>
-          <a-input class="max-w-110" v-model:value="query.minor_version" placeholder="功能" />
+          <a-input
+            class="max-w-110"
+            v-model:value="query.minor_version"
+            placeholder="功能"
+          />
           <text style="padding: 0 10rpx;">. </text>
-          <a-input class="max-w-110" v-model:value="query.revision" placeholder="修改" />
+          <a-input
+            class="max-w-110"
+            v-model:value="query.revision"
+            placeholder="修改"
+          />
         </div>
       </div>
     </div>

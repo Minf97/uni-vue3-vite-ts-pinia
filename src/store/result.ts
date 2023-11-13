@@ -7,28 +7,58 @@ export default defineStore(
   'result',
   () => {
     const result = ref({});
-    const { state } = useStore('app')
+    const JSONList = ref<string[] | string[][]>([]);
+    const { state } = useStore('app');
+
+    const setJSONList = (obj) => {
+      // menu、menu2不要
+      if (obj.type == 'menu' || obj.type == 'menu2') return;
+      // choice单独处理
+      if (obj.type == 'choice') {
+        let list = obj.children.map(item => item.name.replace(/-id-/g, "-id1-"));
+        JSONList.value.push(list);
+      }
+      // 此时只有bool、string、int
+      else {
+        JSONList.value.push(obj.name)
+      }
+    }
+
+    const findJSONListKey = (key): boolean | string[] => {
+      const choiceList = JSONList.value.filter(key => typeof key === 'object');
+      const bool = JSONList.value.includes(key);
+      if (!bool) {
+        const res = choiceList.filter(item => item.includes(key));
+        return res.length ? res[0] : false
+      }
+      return bool
+    }
+
     // 赋值
     const changeResult = (key: string, val, obj: Kconfig.children) => {
       key = handleKey(key);
       result.value[key] = val;
 
-      obj.value = val;
+      if(!val) return;
+
+      obj.value = val ;
       obj.secondChange = true;
       obj.clearFocus = false;
-      if(obj.type === 'choice') {
-        for(let child of obj.children) {
-          console.log(child.name, key, "help");
+      if (obj.type === 'choice') {
+        for (let child of obj.children) {
+          // console.log(child.name, key, "help");
           let name = child.name.replace(/-id(\d+)-/, "$1");
-          if(name == key) {
+          console.log(obj.name, name, key);
+          if (name == key) {
             obj.value = child.title;
+            console.log(obj,obj.value, key, "----------");
+
           }
         }
-
       }
-
-      console.log("result赋值了:", key, val,);
+      console.log("result赋值了:", key, val, obj);
     }
+
     // 删除键值
     const delResult = (key: string, obj: null | Kconfig.children = null) => {
       if (key) {
@@ -72,7 +102,7 @@ export default defineStore(
                   console.log(node, nodeKey, "删除子依赖项的key");
                 }
               } else {
-                console.log(dependsList, nameList, intersection, node.name);
+                // console.log(dependsList, nameList, intersection, node.name);
               }
             }
             if (node.children.length > 0) {
@@ -88,7 +118,7 @@ export default defineStore(
               if (item.name) {
                 const objKey = handleKey(item.name);
                 delete result.value[objKey];
-                console.log(objKey, "删除son的key");
+                // console.log(objKey, "删除son的key");
               }
               delChildKey(item)
             })
@@ -102,17 +132,20 @@ export default defineStore(
 
     const findKey = (key: string): boolean => {
       key = handleKey(key);
-      console.log(key, "handleKey后的key");
+      // console.log(key, result.value[key], (result.value[key] && result.value[key] != "n"), "handleKey后的key");
 
-      return result.value[key] && result.value[key] != "n" ? true : false
+      return (result.value[key] && result.value[key] != "n") ? true : false
     }
 
     return {
       result,
+      JSONList,
       // formList,
       changeResult,
       delResult,
-      findKey
+      findKey,
+      setJSONList,
+      findJSONListKey
     };
   }
 );
@@ -121,7 +154,7 @@ function handleKey(key: string) {
   const match = key.match(/id(\d+)/);
   if (match) {
     const id = match[1];
-    key = key.replace(/-id.+-/, id);
+    key = key.replace(/-id(\d+)-/, id);
   }
   return key
 }
