@@ -149,6 +149,7 @@ function recursiveAddResult(obj) {
               child.name = child.name.replace(/-id.+-/, `-id${id}-`);
               child.depends_on = child.depends_on.replace(/-id.+-/g, `-id${id}-`);
               child.default = result.value[key];
+              newItem.value = child.title;
               // 如果有一项满足，就把子项所有的名字改掉，也要把父项的名字改掉
               for (let i = 0; i < newItem.children.length; i++) {
                 const child = newItem.children[i];
