@@ -22,6 +22,7 @@ const resultFlag = ref(true);
 // query传参
 const query = reactive<Query>(parseQueryParams(window.location.href));
 
+
 // 请求JSON
 apiTest.getKconfig(query.CONFIG_CL_PRODUCT_ID).then((res) => {
   let kconfig = res?.kconfig ? res.kconfig : kconfigJSON;
@@ -39,12 +40,14 @@ apiTest.getKconfig(query.CONFIG_CL_PRODUCT_ID).then((res) => {
       console.log(newConfig, "newConfig");
 
       // 递归加入服务器的缓存值
+      // debugger
       for (let key in newConfig) {
         const value = newConfig[key];
         state.value.kconfig = kconfig.map((item) => {
           return addDefaultRecursive(item, key, value);
         });
       }
+      console.log(state.value.kconfig, "kconfig");
 
       Object.assign(result.value, newConfig);
     }
@@ -183,7 +186,7 @@ const build = () => {
     </div>
     <hr style="margin-top: 100px;" />
 
-    <div v-for="item in state.kconfig" :key="item.name">
+    <div v-for="item in state.kconfig" :key="item?.name">
       <stringComponent v-if="checkIfCanShow(item, 'string')" :data="item" />
       <intComponent v-if="checkIfCanShow(item, 'int')" :data="item" />
       <boolComponent v-if="checkIfCanShow(item, 'bool')" :data="item" />

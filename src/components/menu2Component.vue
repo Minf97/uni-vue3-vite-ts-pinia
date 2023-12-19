@@ -127,11 +127,16 @@ function recursiveAddResult(obj) {
   let res = [];
   for (const key in result.value) {
     const match = key.match(/_(\d+)_/);
+    console.log();
+
     if (match) {
       const id = match[1];
       // 判断是否要新增展示自定义项，只有id>1时，才是新增的自定义项
       if (id > 1) {
+        console.log(obj, "我去");
+
         const newItem = deepClone(obj);
+        // return;
         // 找到对应的项了，新增该项
         if (newItem.name.replace(/-id(\d+)-/, id) === key) {
           newItem.name = newItem.name.replace(/-id(\d+)-/g, `-id${id}-`);

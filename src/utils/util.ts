@@ -42,10 +42,10 @@ export function handleDepends_on1(str: string | null) {
  */
 export function checkIfCanShow(data: Kconfig.children, type: Kconfig.Type) {
   // menu单独处理
-  if (type == 'menu') return data.title !== null && (data.type == type);
-  if (type == 'menu2') return data.title !== null && (data.type == type);
+  if (type == 'menu') return data?.title !== null && (data?.type == type);
+  if (type == 'menu2') return data?.title !== null && (data?.type == type);
 
-  return data.name && (data.type == type) && data.title !== null
+  return data?.name && (data?.type == type) && data?.title !== null
 }
 
 /**
