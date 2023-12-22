@@ -100,7 +100,12 @@ export default defineStore(
                   //   node.parent.value = null;
                   // }
                   if(parent && parent.type === 'choice') {
-                    parent.value = null;
+                    console.log(parent, parent.title, "|||");
+                    // 判断一下该value是否需要置空
+                    if(parent.value) {
+                      const [n] = parent.children.filter(child => child.title === parent.value);
+                      !handleDepends_on(n.depends_on) && (parent.value = null);
+                    }
                   }
 
                   console.log(node, node.title, parent, "删除子依赖项的key");
