@@ -9,7 +9,7 @@
       </div>
     </a-tooltip>
 
-    <div class="flex flex-1 items-center" :class="{'flex-4': isSpecial}">
+    <div class="flex flex-1 items-center" :class="{ 'flex-4': isSpecial }">
       <a-select
         class="w-100% max-w-800"
         ref="select"
@@ -35,7 +35,10 @@ import { removeEscapedQuotes } from "@/utils/util";
 import { ref, watch } from "vue";
 
 // 数据
-const { data, isSpecial } = defineProps<{ data: Kconfig.ChoiceObj, isSpecial:boolean }>();
+const { data, isSpecial } = defineProps<{
+  data: Kconfig.ChoiceObj;
+  isSpecial: boolean;
+}>();
 const { changeResult, delResult, findKey } = useStore("result");
 const { flag } = useDepend(data);
 
@@ -43,10 +46,28 @@ const { flag } = useDepend(data);
 const inputVal = ref("");
 const toolTip = ref("");
 
+watch(flag, (newVal) => {
+  const child = data.children.filter((child) => child.title == data.value)[0];
+  // console.log(data,child,child.name, "????");
+  const handle = () => {
+    // 全部删掉
+    data.children.map(child => delResult(child.name));
+    // 赋值
+    changeResult(child.name, "y", data)
+  }
+  child && (newVal ? handle() : delResult(child.name));
+}, {immediate: true});
+
 watch(
   data,
   (newVal) => {
-    // console.log(newVal.name, newVal.value, "choice更新", inputVal.value);
+    console.log(
+      newVal,
+      newVal.name,
+      newVal.value,
+      "choice更新",
+      inputVal.value
+    );
     if (data.clearFocus) {
       inputVal.value = "";
       return;
@@ -57,7 +78,7 @@ watch(
       }
       if (item.default && !data.secondChange) {
         inputVal.value = item.name;
-        data.value = item.default ;
+        data.value = item.default;
       }
     });
   },
@@ -92,12 +113,13 @@ const onChange = (e) => {
   data.children.map((item) => {
     if (item.name !== e) {
       delResult(item.name, item);
+    } else {
+      changeResult(e, "y", data);
+      data.clearFocus = false;
+      // choice也该补上值
+      data.value = item.title;
     }
   });
-  changeResult(e, "y", data);
-  data.clearFocus = false;
-  // choice也该补上值
-  data.value = e
 };
 </script>
 

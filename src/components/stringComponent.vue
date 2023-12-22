@@ -37,17 +37,21 @@ import { checkIfCanShow, removeEscapedQuotes } from "@/utils/util";
 import { ref, watch, watchEffect } from "vue";
 // 数据
 const { data, isSpecial } = defineProps<{ data: Kconfig.StringObj, isSpecial:boolean }>();
-const { changeResult } = useStore("result");
+const { changeResult,delResult } = useStore("result");
 const { flag } = useDepend(data);
 
 // 双向绑定
 const inputVal = ref(removeEscapedQuotes(data.default));
 
+watch(flag, (newVal) => {
+  console.log(data, "??***");
+  newVal ? changeResult(data.name, data.value, data) : delResult(data.name);
+});
+
 watch(inputVal, () => {
   data.status = "";
 });
 watch(data, () => {
-  // console.log("tttt!!!变化了", data);
   (inputVal.value = removeEscapedQuotes(data.value));
 });
 // 输入框改变事件

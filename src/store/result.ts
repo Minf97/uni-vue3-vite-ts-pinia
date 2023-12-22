@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import { handleDepends_on1 } from '@/utils/util';
+import { handleDepends_on1, find } from '@/utils/util';
 import { handleDepends_on } from "@/hooks/useDepend"
 import { useStore } from '@/helper/pinia-auto-refs';
 
@@ -46,13 +46,10 @@ export default defineStore(
       obj.clearFocus = false;
       if (obj.type === 'choice') {
         for (let child of obj.children) {
-          // console.log(child.name, key, "help");
           let name = child.name.replace(/-id(\d+)-/, "$1");
-          console.log(obj.name, name, key);
+          // 遍历获取名字
           if (name == key) {
             obj.value = child.title;
-            console.log(obj, obj.value, key, "----------");
-
           }
         }
       }
@@ -67,10 +64,8 @@ export default defineStore(
       }
 
       const nameList = new Set();
-
       if (obj) {
         obj.value = null;
-        // obj.default = null;
         // 子依赖项要删除
         function findDependChild(arr, name) {
           let realName = name;
@@ -87,7 +82,7 @@ export default defineStore(
               // console.log(intersection, intersection.filter(item => item));
               // intersection有可能是 [undefined]
               if (intersection.filter(item => item).length > 0) {
-                node.value = null;
+                // node.value = null;
                 node.clearFocus = true;
                 node.secondChange = false;
                 if (node.name) {
@@ -99,10 +94,16 @@ export default defineStore(
                   const nodeKey = handleKey(node.name);
                   delete result.value[nodeKey];
                   delChildKey(node);
-                  if(node.parent && node.parent.type === 'choice') {
-                    node.parent.value = null;
+
+                  const parent = find(node.parent,state.value.kconfig)
+                  // if(node.parent && node.parent.type === 'choice') {
+                  //   node.parent.value = null;
+                  // }
+                  if(parent && parent.type === 'choice') {
+                    parent.value = null;
                   }
-                  console.log(node, node.title, "删除子依赖项的key");
+
+                  console.log(node, node.title, parent, "删除子依赖项的key");
                 }
               }
             }
@@ -133,8 +134,7 @@ export default defineStore(
 
     const findKey = (key: string): boolean => {
       key = handleKey(key);
-      // console.log(key, result.value[key], (result.value[key] && result.value[key] != "n"), "handleKey后的key");
-
+      if(key.includes('<choice')) return true;
       return (result.value[key] && result.value[key] != "n") ? true : false
     }
 

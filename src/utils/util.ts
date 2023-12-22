@@ -3,6 +3,20 @@ import { deepClone } from "./clone";
 import { watch } from "vue";
 
 
+export function find(name, arr) {
+  for (let obj of arr) {
+    if (obj.name === name) {
+      return obj;
+    }
+    if (obj.children && obj.children.length > 0) {
+      const foundObj = find(name, obj.children);
+      if (foundObj) {
+        return foundObj;
+      }
+    }
+  }
+  return null;
+}
 
 /**
  * 处理depends_on字段的内容
@@ -17,13 +31,13 @@ export function handleDepends_on1(str: string | null) {
   // null
   if (!str) return result;
   // 存在 &&
-  if (str.includes('&&')) {
+  if (str.includes("&&")) {
     const a = str
-      .split('&&')
-      .filter(item => item.trim() && !regex.test(item))
-      .map(item => item.replace(/\s*/g, ''));
+      .split("&&")
+      .filter((item) => item.trim() && !regex.test(item))
+      .map((item) => item.replace(/\s*/g, ""));
 
-    result = result.concat(a)
+    result = result.concat(a);
   }
   // 不存在 &&
   else {
@@ -42,10 +56,10 @@ export function handleDepends_on1(str: string | null) {
  */
 export function checkIfCanShow(data: Kconfig.children, type: Kconfig.Type) {
   // menu单独处理
-  if (type == 'menu') return data?.title !== null && (data?.type == type);
-  if (type == 'menu2') return data?.title !== null && (data?.type == type);
+  if (type == "menu") return data?.title !== null && data?.type == type;
+  if (type == "menu2") return data?.title !== null && data?.type == type;
 
-  return data?.name && (data?.type == type) && data?.title !== null
+  return data?.name && data?.type == type && data?.title !== null;
 }
 
 /**
@@ -54,7 +68,7 @@ export function checkIfCanShow(data: Kconfig.children, type: Kconfig.Type) {
  * @returns
  */
 export function filterConfigValue(config) {
-  const { JSONList, delResult, findJSONListKey } = useStore('result')
+  const { JSONList, delResult, findJSONListKey } = useStore("result");
   const configKeys = Object.keys(config);
   const newConfig = deepClone(config);
 
@@ -70,79 +84,82 @@ export function filterConfigValue(config) {
     key = key.replace(/-id(\d+)-/g, "$1");
     delete newConfig[key];
     // delResult(key);
-  }
+  };
 
   const handleCustom = (key) => {
-    // debugger
-    const newkey = key.replace(/_(\d+)_/g, "_-id1-_")
+    const newkey = key.replace(/_(\d+)_/g, "_-id1-_");
     const res = findJSONListKey(newkey);
     // choice
-    if (typeof res === 'object') {
-      res.forEach(item => delConfigKey(item)) // 全部干掉再赋值服务器的缓存值
-      newConfig[key] = config[key];
+    if (typeof res === "object") {
+      res.forEach((item) => delConfigKey(item)); // 全部干掉再赋值服务器的缓存值
+      config[key] && (newConfig[key] = config[key]);
     }
 
-    // 清除不存在的值
+    // 值不存在，判断是脏值，已经过期的数据，要过滤掉
     if (!res) {
-      delete newConfig[key]
+      delete newConfig[key];
     }
-  }
+  };
 
   const handlePrimary = (key) => {
-    const res = findJSONListKey(key)
+    const res = findJSONListKey(key);
     // choice
-    if (typeof res === 'object') {
-      res.forEach(item => delConfigKey(item)) // 全部干掉再赋值服务器的缓存值
-      newConfig[key] = config[key];
+    if (typeof res === "object") {
+      res.forEach((item) => delConfigKey(item)); // 全部干掉再赋值服务器的缓存值
+      config[key] && (newConfig[key] = config[key]);
     }
     // 清除不存在的值
     if (!res) {
-      delete newConfig[key]
+      delete newConfig[key];
     }
-  }
+  };
 
   // 旧值不要：JSONList不存在的值，也会过滤掉
   // 注意不要把自定义key给过滤掉了
-  configKeys.forEach(key => {
+  configKeys.forEach((key) => {
     const ifCustomKey = /_(\d+)_/.test(key);
     ifCustomKey ? handleCustom(key) : handlePrimary(key);
-  })
+  });
 
-
-
-  // console.log(newConfig, "newConfig1");
-
-  return newConfig
+  return newConfig;
 }
 
 /**
  * 深度遍历，
  * @param obj 对象
- * @param name name值
- * @param value
+ * @param name 缓存key
+ * @param value 缓存值
  * @returns
  */
 export function addDefaultRecursive(obj, name, value, parent = null) {
-  const { findJSONListKey, result, delResult } = useStore('result')
+  const { findJSONListKey, result, delResult } = useStore("result");
   // 对默认值做一层处理
   obj.default && (obj.default = removeEscapedQuotes(obj.default));
 
   // 对名称做一层处理
   let objName = obj.name;
   if (objName && objName.match(/-id(\d+)-/)) {
-    objName = objName.replace(/-id(\d+)-/, '1');
+    objName = objName.replace(/-id(\d+)-/, "1");
   }
+  // (objName === name) && console.log(objName, name, parent, "!!!!!!!!!!!!!!!");
 
   // 匹配成功
   if (objName === name) {
-    if (parent && parent.type == 'choice') {
+    if (parent && parent.type == "choice") {
       const choiceList = findJSONListKey(obj.name);
+      // 这些是默认值
       const resultKeys = Object.keys(result.value);
-      const defaultKeyList = choiceList.filter(item => resultKeys.includes(item.replace(/-id(\d+)-/g, "$1")));
-      defaultKeyList.length && defaultKeyList.forEach(defaultKey => delResult(defaultKey));
-      parent.value = obj.name;
-    }
-    else {
+      const defaultKeyList = choiceList.filter((item) =>
+        resultKeys.includes(item.replace(/-id(\d+)-/g, "$1"))
+      );
+      defaultKeyList.length &&
+        defaultKeyList.forEach((defaultKey) => delResult(defaultKey));
+
+      parent.value = obj.title;
+      // 将该choice的默认值改为服务器的值
+      parent.children.forEach(child => child.default = 'n');
+      obj.default = value;
+    } else {
       obj.value = value;
       obj.default = value;
     }
@@ -169,30 +186,31 @@ export function addDefaultRecursive(obj, name, value, parent = null) {
  * @returns
  */
 export function addResultRecursive(obj, parent = null) {
-  const { changeResult, setJSONList } = useStore('result')
+  const { changeResult, setJSONList } = useStore("result");
   // 修改名字和依赖(针对自定义key)
   if (obj.name && obj.name.match(/-id-/)) {
-    obj.name = obj.name.replace(/-id-/, '-id1-');
-    obj.depends_on = obj.depends_on ? obj.depends_on?.replace(/-id-/g, '-id1-') : obj.depends_on;
+    obj.name = obj.name.replace(/-id-/, "-id1-");
+    obj.depends_on = obj.depends_on
+      ? obj.depends_on?.replace(/-id-/g, "-id1-")
+      : obj.depends_on;
 
-    console.log(obj.name, 77776);
+    // console.log(obj.name, 77776);
   }
   // 新增字段，parent
-  parent && (obj.parent = parent);
+  parent && (obj.parent = parent.name);
   // 将默认值加入result
   if (handleDepends_on(obj.depends_on) && obj.name) {
-    if (parent?.type == 'choice' && obj.default === 'y') {
-      parent.value = obj.name;
+    if (parent?.type == "choice" && obj.default === "y") {
+      parent.value = obj.title;
       changeResult(obj.name, obj.default, parent);
-    }
-    else {
+    } else {
       changeResult(obj.name, obj.default, obj);
       obj.value = obj.default;
+      // console.log(obj.title, obj, "$$$");
     }
-
   }
 
-  if (parent?.type != 'choice') {
+  if (parent?.type != "choice") {
     setJSONList(obj);
   }
 
@@ -211,21 +229,20 @@ export function addResultRecursive(obj, parent = null) {
  * @returns
  */
 export function treeRecursive(obj) {
-  const { flag } = useDepend(obj)
+  const { flag } = useDepend(obj);
   let flag1 = true;
-  if (obj.type == 'menu' || obj.type == 'menu2' || obj.type == 'bool') {
-    if (obj.type == 'menu2') {
+  if (obj.type == "menu" || obj.type == "menu2" || obj.type == "bool") {
+    if (obj.type == "menu2") {
       // console.log(obj, 6666);
     }
-  }
-  else if (
+  } else if (
     // 没有填写值
     (!obj.value || !obj.value.replace(/""/g, "")) &&
     // 不是禁用项
     !obj.disabled &&
     flag.value
   ) {
-    obj.status = 'error';
+    obj.status = "error";
     flag1 = false;
     console.log(obj, "校验值失败！该项值为空");
   }
@@ -239,7 +256,7 @@ export function treeRecursive(obj) {
     }
   }
 
-  return flag1
+  return flag1;
 }
 
 /**
@@ -250,15 +267,14 @@ export function treeRecursive(obj) {
  * @returns
  */
 export function findTreeRecursive(obj) {
-  const { flag } = useDepend(obj)
+  const { flag } = useDepend(obj);
   let flag1 = true;
-  if (obj.type == 'menu' || obj.type == 'menu2' || obj.type == 'bool') {
-    if (obj.type == 'menu2') {
+  if (obj.type == "menu" || obj.type == "menu2" || obj.type == "bool") {
+    if (obj.type == "menu2") {
       // console.log(obj, 6666);
     }
-  }
-  else if (!obj.value && flag.value) {
-    obj.status = 'error';
+  } else if (!obj.value && flag.value) {
+    obj.status = "error";
     flag1 = false;
     console.log(obj, "校验值失败！该项值为空");
   }
@@ -272,9 +288,8 @@ export function findTreeRecursive(obj) {
     }
   }
 
-  return flag1
+  return flag1;
 }
-
 
 /**
  * 16进制转10进制
@@ -292,27 +307,25 @@ export function hexToDecimal(hex: string): number {
  */
 export function decimalToHex(decimal: number): string {
   // 使用 toString() 将十进制数值转换为十六进制字符串，并添加前缀 "0x"
-  return '0x' + decimal.toString(16).toUpperCase();
+  return "0x" + decimal.toString(16).toUpperCase();
 }
-
 
 /**
  * 校验是否是16进制
  */
 export function checkIsHex(val: string): boolean {
-  const regex = /^0x[0-9A-Fa-f]+$/
+  const regex = /^0x[0-9A-Fa-f]+$/;
   return regex.test(String(val));
 }
 
-
 export function removeEscapedQuotes(str) {
-  return str ? str.replace(/^"|"$/g, '') : '';
+  return str ? str.replace(/^"|"$/g, "") : "";
 }
 
 // recursive
 
 export function parseQueryParams(url) {
-  const queryString = url.split('?')[1]; // 获取 "?" 后面的查询参数部分
+  const queryString = url.split("?")[1]; // 获取 "?" 后面的查询参数部分
   const params = new URLSearchParams(queryString); // 创建 URLSearchParams 对象
 
   const queryParams = {}; // 创建空对象存储查询参数

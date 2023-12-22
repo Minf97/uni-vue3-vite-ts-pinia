@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // @ts-nocheck
-import { kconfigJSON } from "./kconfig";
+import { kconfigJSON } from "./kconfig2";
 import {
   checkIfCanShow,
   filterConfigValue,
@@ -8,6 +8,7 @@ import {
   addResultRecursive,
   treeRecursive,
   parseQueryParams,
+  find
 } from "@/utils/util";
 import { notification } from "ant-design-vue";
 import { RightOutlined } from "@ant-design/icons-vue";
@@ -28,34 +29,34 @@ apiTest.getKconfig(query.CONFIG_CL_PRODUCT_ID).then((res) => {
   let kconfig = res?.kconfig ? res.kconfig : kconfigJSON;
   // 首先是把JSON里的默认值加进result里
   kconfig?.forEach((item) => addResultRecursive(item));
-  // 然后是把服务器的值填充进来，会把上面的默认值覆盖掉
+  // 然后是获取服务器的缓存值
   apiTest.getLastCompileJSON(query.device_model_id).then((res) => {
     let config = res?.formconfig ? res.formconfig : result.value;
 
     if (Object.keys(config).length == 0) {
       state.value.kconfig = kconfig;
     } else {
-      // 把CONFIG_前缀去掉，并且过滤掉旧的不存在的key、branch、版本号 这些没用的信息
-      const newConfig = filterConfigValue(config);
-      console.log(newConfig, "newConfig");
 
-      // 递归加入服务器的缓存值
-      // debugger
+
+      // 过滤：
+      // 1.把CONFIG_前缀去掉
+      // 2.过滤掉旧的不存在的key、branch、版本号 这些没用的信息
+      const newConfig = filterConfigValue(config);
+      // 用递归将服务器缓存值加入
       for (let key in newConfig) {
         const value = newConfig[key];
         state.value.kconfig = kconfig.map((item) => {
           return addDefaultRecursive(item, key, value);
         });
       }
-      console.log(state.value.kconfig, "kconfig");
+      // console.log(find("CL_REMOTE_CONTROL_MODEL", state.value.kconfig), state.value.kconfig, "$$$");
+      // 重新赋值result.value，此时newConfig才是纯净的值，他已经进行了多重过滤
+      Object.assign(result.value, newConfig)
 
-      Object.assign(result.value, newConfig);
+      // console.log(result.value, newConfig, "console.log(result.value);");
     }
   });
 });
-
-console.log(JSONList, "??");
-
 
 const openNotificationWithIcon = (
   type: "success" | "error" | "info" | "warning",
@@ -187,12 +188,12 @@ const build = () => {
     <hr style="margin-top: 100px;" />
 
     <div v-for="item in state.kconfig" :key="item?.name">
-      <stringComponent v-if="checkIfCanShow(item, 'string')" :data="item" />
-      <intComponent v-if="checkIfCanShow(item, 'int')" :data="item" />
-      <boolComponent v-if="checkIfCanShow(item, 'bool')" :data="item" />
-      <choiceComponent v-if="checkIfCanShow(item, 'choice')" :data="item" />
-      <menuComponent v-if="checkIfCanShow(item, 'menu')" :data="item" />
-      <menu2Component v-if="checkIfCanShow(item, 'menu2')" :data="item" />
+      <stringComponent v-if="checkIfCanShow(item, 'string')" :data="item" :isSpecial="false" />
+      <intComponent v-if="checkIfCanShow(item, 'int')" :data="item" :isSpecial="false" />
+      <boolComponent v-if="checkIfCanShow(item, 'bool')" :data="item" :isSpecial="false" />
+      <choiceComponent v-if="checkIfCanShow(item, 'choice')" :data="item" :isSpecial="false" />
+      <menuComponent v-if="checkIfCanShow(item, 'menu')" :data="item" :isSpecial="false" />
+      <menu2Component v-if="checkIfCanShow(item, 'menu2')" :data="item" :isSpecial="false" />
     </div>
     <!-- 悬浮按钮 -->
     <a-back-top :visibility-height="100" />

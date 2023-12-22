@@ -214,7 +214,7 @@ const addChildren = () => {
   function recursive(obj, lastID) {
     const newItem = deepClone(obj);
     let res = "";
-    // console.log(newItem.name, 55555, lastID);
+    console.log(newItem.name, 55555, lastID);
 
     if (newItem.name.includes(`-id${lastID}-`)) {
       newItem.name = newItem.name.replace(/-id(\d+)?-/g, `-id${lastID + 1}-`);

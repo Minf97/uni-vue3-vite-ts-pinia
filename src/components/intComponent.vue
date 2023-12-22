@@ -51,11 +51,11 @@
   </div>
   <!-- 特殊项 - children - 用于递归 -->
   <div v-for="item in data.children" v-if="flag">
-    <stringComponent v-if="checkIfCanShow(item, 'string')" :data="item" />
-    <intComponent v-if="checkIfCanShow(item, 'int')" :data="item" />
-    <boolComponent v-if="checkIfCanShow(item, 'bool')" :data="item" />
-    <choiceComponent v-if="checkIfCanShow(item, 'choice')" :data="item" />
-    <menuComponent v-if="checkIfCanShow(item, 'menu')" :data="item" />
+    <stringComponent v-if="checkIfCanShow(item, 'string')" :data="item" :isSpecial="isSpecial" />
+    <intComponent v-if="checkIfCanShow(item, 'int')" :data="item" :isSpecial="isSpecial" />
+    <boolComponent v-if="checkIfCanShow(item, 'bool')" :data="item" :isSpecial="isSpecial" />
+    <choiceComponent v-if="checkIfCanShow(item, 'choice')" :data="item" :isSpecial="isSpecial" />
+    <menuComponent v-if="checkIfCanShow(item, 'menu')" :data="item" :isSpecial="isSpecial" />
   </div>
 </template>
 
@@ -88,6 +88,11 @@ if (data.range && data.range.length > 1) {
   range.min = data.range[0];
   range.max = data.range[1];
 }
+
+watch(flag, (newVal) => {
+  console.log(data, "??***");
+  newVal ? changeResult(data.name, data.value, data) : delResult(data.name);
+});
 
 watch(data, () => {}, { immediate: true, deep: true });
 
